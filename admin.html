@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Admin — THE SIGNAL</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Playfair+Display:wght@700;900&family=DM+Serif+Display&family=Literata:opsz,wght@7..72,300;7..72,400&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#0b0d13;--surface:#13161f;--surface2:#1c2030;--border:#252a3a;
+  --text:#e8e2d5;--muted:#7a7f94;--accent:#c8392b;--gold:#e8a832;
+  --cyan:#3ab0c8;--green:#2dc483;--purple:#c47de8;--white:#f5f0e6;
+  --T:.2s ease;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:14px;min-height:100vh;}
+a{color:inherit;text-decoration:none;}
+
+/* ── LOGIN ── */
+#login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px;}
+.login-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:48px;width:100%;max-width:400px;text-align:center;}
+.login-logo{font-family:'DM Serif Display',serif;font-size:2rem;color:var(--white);margin-bottom:4px;}
+.login-logo span{color:var(--accent);}
+.login-sub{font-size:.65rem;letter-spacing:.12em;color:var(--muted);margin-bottom:32px;text-transform:uppercase;}
+.login-label{font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:block;text-align:left;margin-bottom:6px;margin-top:16px;}
+.login-input{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:.85rem;padding:10px 14px;border-radius:6px;outline:none;transition:border-color var(--T);}
+.login-input:focus{border-color:var(--accent);}
+.login-btn{width:100%;background:var(--accent);color:#fff;border:none;padding:12px;border-radius:6px;font-family:'IBM Plex Mono',monospace;font-size:.75rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;margin-top:24px;transition:background var(--T);}
+.login-btn:hover{background:#a02d22;}
+.login-err{color:#e87070;font-size:.7rem;margin-top:12px;min-height:18px;}
+.login-hint{font-size:.62rem;color:var(--muted);margin-top:20px;line-height:1.6;}
+
+/* ── APP SHELL ── */
+#app{display:none;min-height:100vh;}
+.app-header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 32px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.app-logo{font-family:'DM Serif Display',serif;font-size:1.3rem;color:var(--white);}
+.app-logo span{color:var(--accent);}
+.app-logo small{font-family:'IBM Plex Mono',monospace;font-size:.55rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-left:10px;}
+.hdr-actions{display:flex;gap:10px;align-items:center;}
+.btn{display:inline-flex;align-items:center;gap:6px;font-family:'IBM Plex Mono',monospace;font-size:.68rem;font-weight:600;letter-spacing:.06em;padding:7px 14px;border-radius:6px;cursor:pointer;transition:all var(--T);border:none;white-space:nowrap;}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--muted);}
+.btn-ghost:hover{border-color:var(--text);color:var(--text);}
+.btn-primary{background:var(--accent);color:#fff;}
+.btn-primary:hover{background:#a02d22;}
+.btn-success{background:var(--green);color:#fff;}
+.btn-success:hover{background:#22a06b;}
+.btn-warn{background:var(--gold);color:#0b0d13;}
+.btn-sm{font-size:.6rem;padding:5px 10px;}
+.btn-danger{background:rgba(200,57,43,.15);color:#e87070;border:1px solid rgba(200,57,43,.3);}
+.btn-danger:hover{background:rgba(200,57,43,.3);}
+
+.app-body{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 56px);}
+.sidebar{background:var(--surface);border-right:1px solid var(--border);padding:24px 0;}
+.nav-section{font-size:.55rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);padding:0 20px 8px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;color:var(--muted);cursor:pointer;transition:all var(--T);font-size:.75rem;}
+.nav-item:hover{color:var(--text);background:var(--surface2);}
+.nav-item.active{color:var(--white);background:var(--surface2);border-right:2px solid var(--accent);}
+.nav-sep{height:1px;background:var(--border);margin:12px 0;}
+.main-content{padding:32px;overflow-y:auto;}
+
+/* ── PANELS ── */
+.panel{display:none;}
+.panel.active{display:block;}
+
+/* ── DASHBOARD ── */
+.dash-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px;margin-bottom:32px;}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:20px;}
+.stat-num{font-size:2rem;font-weight:600;color:var(--white);}
+.stat-label{font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:4px;}
+.stat-card.accent{border-color:rgba(200,57,43,.4);background:rgba(200,57,43,.05);}
+
+/* ── ARTICLE LIST ── */
+.page-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;}
+.page-title{font-size:1.1rem;color:var(--white);}
+.filter-bar{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
+.filter-chip{font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;padding:5px 12px;border-radius:20px;border:1px solid var(--border);color:var(--muted);cursor:pointer;transition:all var(--T);}
+.filter-chip:hover,.filter-chip.on{border-color:var(--accent);color:var(--accent);background:rgba(200,57,43,.08);}
+.article-table{width:100%;border-collapse:collapse;}
+.article-table th{font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:8px 12px;text-align:left;border-bottom:1px solid var(--border);}
+.article-table td{padding:12px;border-bottom:1px solid var(--border);font-size:.75rem;vertical-align:top;}
+.article-table tr:hover td{background:var(--surface2);}
+.art-title-cell{font-family:'Playfair Display',serif;font-size:.9rem;font-weight:700;color:var(--text);line-height:1.3;max-width:340px;}
+.badge{display:inline-block;font-size:.55rem;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:3px;}
+.badge-geo{background:rgba(58,176,200,.12);color:var(--cyan);}
+.badge-tech{background:rgba(45,196,131,.12);color:var(--green);}
+.badge-sports{background:rgba(232,168,50,.12);color:var(--gold);}
+.badge-media{background:rgba(196,125,232,.12);color:var(--purple);}
+.badge-factcheck{background:rgba(200,57,43,.15);color:#e87070;}
+.badge-featured{background:rgba(232,168,50,.15);color:var(--gold);}
+.actions-cell{display:flex;gap:6px;align-items:center;}
+
+/* ── EDITOR ── */
+.editor-grid{display:grid;grid-template-columns:1fr 300px;gap:24px;align-items:start;}
+.editor-main{display:flex;flex-direction:column;gap:16px;}
+.editor-sidebar{display:flex;flex-direction:column;gap:16px;}
+.field-group{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:20px;}
+.field-group-title{font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+.field{margin-bottom:14px;}
+.field:last-child{margin-bottom:0;}
+label{display:block;font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+input[type=text],input[type=url],input[type=number],input[type=datetime-local],select,textarea{
+  width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);
+  font-family:'IBM Plex Mono',monospace;font-size:.8rem;padding:9px 12px;
+  border-radius:6px;outline:none;transition:border-color var(--T);}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);}
+textarea.content-area{min-height:380px;resize:vertical;line-height:1.7;font-family:'Literata',serif;font-size:.9rem;}
+select option{background:var(--surface);}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;}
+.toggle{position:relative;width:40px;height:22px;cursor:pointer;}
+.toggle input{opacity:0;width:0;height:0;}
+.toggle-slider{position:absolute;inset:0;background:var(--border);border-radius:11px;transition:background var(--T);}
+.toggle-slider::before{content:'';position:absolute;height:16px;width:16px;left:3px;bottom:3px;background:var(--muted);border-radius:50%;transition:transform var(--T),background var(--T);}
+.toggle input:checked+.toggle-slider{background:var(--accent);}
+.toggle input:checked+.toggle-slider::before{transform:translateX(18px);background:#fff;}
+
+/* ── SETTINGS ── */
+.settings-form{max-width:600px;}
+.settings-section{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:24px;margin-bottom:20px;}
+.settings-section h3{font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:20px;}
+.github-status{display:flex;align-items:center;gap:8px;font-size:.72rem;padding:10px 14px;border-radius:6px;border:1px solid var(--border);margin-bottom:16px;}
+.status-dot{width:8px;height:8px;border-radius:50%;background:var(--muted);}
+.status-dot.ok{background:var(--green);}
+.status-dot.err{background:var(--accent);}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 20px;font-size:.75rem;color:var(--text);z-index:9999;transform:translateY(80px);opacity:0;transition:all .3s ease;max-width:320px;}
+.toast.show{transform:none;opacity:1;}
+.toast.success{border-color:rgba(45,196,131,.5);background:rgba(45,196,131,.08);}
+.toast.error{border-color:rgba(200,57,43,.5);background:rgba(200,57,43,.08);}
+
+/* ── MODAL ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:32px;width:90%;max-width:440px;}
+.modal h2{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:var(--white);margin-bottom:12px;}
+.modal p{font-size:.8rem;color:var(--muted);line-height:1.6;margin-bottom:24px;}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;}
+
+/* ── MISC ── */
+.empty-state{text-align:center;padding:60px 20px;color:var(--muted);font-size:.75rem;}
+.empty-state .big{font-size:3rem;margin-bottom:12px;opacity:.3;}
+.saving-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:800;align-items:center;justify-content:center;font-size:.85rem;color:var(--white);}
+.saving-overlay.open{display:flex;}
+.spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;margin-right:14px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:800px){.editor-grid{grid-template-columns:1fr;}.app-body{grid-template-columns:1fr;}.sidebar{display:none;}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">THE <span>SIGNAL</span></div>
+    <div class="login-sub">Admin Panel</div>
+    <label class="login-label">Admin Password</label>
+    <input class="login-input" type="password" id="login-pw" placeholder="Enter your admin password" onkeydown="if(event.key==='Enter')doLogin()"/>
+    <button class="login-btn" onclick="doLogin()">Sign In →</button>
+    <div class="login-err" id="login-err"></div>
+    <div class="login-hint">
+      First time? Set your password in <strong>Settings</strong> after logging in with the default: <code>signal123</code>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <header class="app-header">
+    <div style="display:flex;align-items:center;gap:8px;">
+      <a href="index.html" target="_blank" class="app-logo">THE <span>SIGNAL</span></a>
+      <small class="app-logo" style="font-family:'IBM Plex Mono',monospace;font-size:.55rem;color:var(--muted);letter-spacing:.1em">ADMIN</small>
+    </div>
+    <div class="hdr-actions">
+      <span id="save-status" style="font-size:.62rem;color:var(--muted)"></span>
+      <a href="index.html" target="_blank" class="btn btn-ghost">View Site ↗</a>
+      <button class="btn btn-ghost" onclick="doLogout()">Sign Out</button>
+    </div>
+  </header>
+
+  <div class="app-body">
+    <nav class="sidebar">
+      <div class="nav-section" style="margin-bottom:8px">Content</div>
+      <div class="nav-item active" onclick="showPanel('dashboard')" id="nav-dashboard">📊 Dashboard</div>
+      <div class="nav-item" onclick="showPanel('articles')" id="nav-articles">📰 All Articles</div>
+      <div class="nav-item" onclick="newArticle()" id="nav-new">✍️ Write Article</div>
+      <div class="nav-sep"></div>
+      <div class="nav-section">Config</div>
+      <div class="nav-item" onclick="showPanel('ticker')" id="nav-ticker">📡 News Ticker</div>
+      <div class="nav-item" onclick="showPanel('settings')" id="nav-settings">⚙️ Settings</div>
+    </nav>
+
+    <main class="main-content">
+
+      <!-- DASHBOARD -->
+      <div class="panel active" id="panel-dashboard">
+        <div class="page-hdr">
+          <div class="page-title">Dashboard</div>
+          <button class="btn btn-primary" onclick="newArticle()">✍️ New Article</button>
+        </div>
+        <div class="dash-grid" id="dash-stats"></div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:20px;">
+          <div style="font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;">Recent Articles</div>
+          <div id="dash-recent"></div>
+        </div>
+      </div>
+
+      <!-- ARTICLES LIST -->
+      <div class="panel" id="panel-articles">
+        <div class="page-hdr">
+          <div class="page-title">All Articles</div>
+          <button class="btn btn-primary" onclick="newArticle()">✍️ New Article</button>
+        </div>
+        <div class="filter-bar" id="filter-bar">
+          <div class="filter-chip on" onclick="filterArticles('all',this)">All</div>
+          <div class="filter-chip" onclick="filterArticles('geopolitics',this)">Geopolitics</div>
+          <div class="filter-chip" onclick="filterArticles('tech',this)">Tech</div>
+          <div class="filter-chip" onclick="filterArticles('sports',this)">Sports</div>
+          <div class="filter-chip" onclick="filterArticles('media',this)">Media</div>
+          <div class="filter-chip" onclick="filterArticles('factcheck',this)">Fact Check</div>
+        </div>
+        <table class="article-table" id="articles-table">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Category</th>
+              <th>Author</th>
+              <th>Date</th>
+              <th>Flags</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="articles-tbody"></tbody>
+        </table>
+      </div>
+
+      <!-- EDITOR -->
+      <div class="panel" id="panel-editor">
+        <div class="page-hdr">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <button class="btn btn-ghost btn-sm" onclick="showPanel('articles')">← Back</button>
+            <div class="page-title" id="editor-title">New Article</div>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-ghost" onclick="previewArticle()">👁 Preview</button>
+            <button class="btn btn-primary" onclick="saveArticle()">💾 Save & Publish</button>
+          </div>
+        </div>
+
+        <input type="hidden" id="ed-id"/>
+
+        <div class="editor-grid">
+          <div class="editor-main">
+            <div class="field-group">
+              <div class="field">
+                <label>Headline *</label>
+                <input type="text" id="ed-title" placeholder="Write a clear, compelling headline…"/>
+              </div>
+              <div class="field">
+                <label>Excerpt / Deck (1–2 sentences shown on homepage)</label>
+                <textarea id="ed-excerpt" rows="3" style="resize:vertical" placeholder="A concise summary that draws readers in…"></textarea>
+              </div>
+            </div>
+
+            <div class="field-group">
+              <div class="field-group-title">Article Body</div>
+              <div style="font-size:.62rem;color:var(--muted);margin-bottom:10px;">Use blank lines between paragraphs. For headings start line with ## or ###.</div>
+              <div class="field">
+                <textarea class="content-area" id="ed-content" placeholder="Write your full article here…&#10;&#10;Separate paragraphs with blank lines.&#10;&#10;## Use double-hash for subheadings&#10;&#10;### Use triple-hash for smaller headings"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="editor-sidebar">
+            <div class="field-group">
+              <div class="field-group-title">Publishing</div>
+              <div class="field">
+                <label>Category *</label>
+                <select id="ed-category">
+                  <option value="geopolitics">Geopolitics</option>
+                  <option value="tech">Tech & Science</option>
+                  <option value="sports">Sports</option>
+                  <option value="media">Media & Culture</option>
+                  <option value="factcheck">Fact Check</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Author *</label>
+                <input type="text" id="ed-author" placeholder="Full name"/>
+              </div>
+              <div class="field">
+                <label>Author Title</label>
+                <input type="text" id="ed-authorTitle" placeholder="e.g. Senior Correspondent"/>
+              </div>
+              <div class="field">
+                <label>Read Time (minutes)</label>
+                <input type="number" id="ed-readTime" min="1" max="60" value="5"/>
+              </div>
+              <div class="field">
+                <label>Publish Date</label>
+                <input type="datetime-local" id="ed-date"/>
+              </div>
+            </div>
+
+            <div class="field-group">
+              <div class="field-group-title">Media</div>
+              <div class="field">
+                <label>Cover Image URL</label>
+                <input type="url" id="ed-image" placeholder="https://…"/>
+              </div>
+              <div style="font-size:.62rem;color:var(--muted);">Tip: upload images to your GitHub repo's <code>/images/</code> folder and use relative path like <code>images/cover.jpg</code></div>
+            </div>
+
+            <div class="field-group">
+              <div class="field-group-title">Tags (comma separated)</div>
+              <div class="field">
+                <input type="text" id="ed-tags" placeholder="India, AI Policy, Tech"/>
+              </div>
+            </div>
+
+            <div class="field-group">
+              <div class="field-group-title">Homepage Placement</div>
+              <div class="field toggle-row">
+                <label style="margin-bottom:0">Featured (Cover Story)</label>
+                <label class="toggle"><input type="checkbox" id="ed-featured"/><span class="toggle-slider"></span></label>
+              </div>
+              <div class="field toggle-row" style="margin-top:10px">
+                <label style="margin-bottom:0">Hero Stack Card</label>
+                <label class="toggle"><input type="checkbox" id="ed-heroCard"/><span class="toggle-slider"></span></label>
+              </div>
+            </div>
+
+            <div class="field-group" id="fc-fields" style="display:none">
+              <div class="field-group-title">Fact Check</div>
+              <div class="field toggle-row">
+                <label style="margin-bottom:0">Is Fact Check</label>
+                <label class="toggle"><input type="checkbox" id="ed-factCheck" onchange="toggleFcFields()"/><span class="toggle-slider"></span></label>
+              </div>
+              <div id="fc-extra" style="display:none;margin-top:14px;">
+                <div class="field">
+                  <label>Verdict</label>
+                  <select id="ed-verdict">
+                    <option value="false">FALSE</option>
+                    <option value="misleading">MISLEADING</option>
+                    <option value="partial">PARTIALLY TRUE</option>
+                    <option value="true">VERIFIED / TRUE</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label>Source / Circulation Note</label>
+                  <input type="text" id="ed-source" placeholder="e.g. Circulating via X — 4M impressions"/>
+                </div>
+              </div>
+            </div>
+            <div class="field-group">
+              <div class="field toggle-row">
+                <label style="margin-bottom:0">Is Fact Check Article</label>
+                <label class="toggle"><input type="checkbox" id="ed-factCheck2" onchange="toggleFcFields2()"/><span class="toggle-slider"></span></label>
+              </div>
+              <div id="fc-extra2" style="display:none;margin-top:14px;">
+                <div class="field">
+                  <label>Verdict</label>
+                  <select id="ed-verdict2">
+                    <option value="false">FALSE</option>
+                    <option value="misleading">MISLEADING</option>
+                    <option value="partial">PARTIALLY TRUE</option>
+                    <option value="true">VERIFIED / TRUE</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label>Source / Circulation Note</label>
+                  <input type="text" id="ed-source2" placeholder="e.g. Circulating via X — 4M impressions"/>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TICKER -->
+      <div class="panel" id="panel-ticker">
+        <div class="page-hdr">
+          <div class="page-title">News Ticker</div>
+          <button class="btn btn-primary" onclick="saveTicker()">💾 Save Ticker</button>
+        </div>
+        <div class="field-group" style="max-width:700px;">
+          <div style="font-size:.62rem;color:var(--muted);margin-bottom:16px;">One headline per line. These scroll in the red bar at the top of your site.</div>
+          <textarea id="ticker-textarea" rows="12" style="resize:vertical;width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:.8rem;padding:12px;border-radius:6px;outline:none;" placeholder="Enter one headline per line…"></textarea>
+        </div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div class="panel" id="panel-settings">
+        <div class="page-title" style="margin-bottom:24px;">Settings</div>
+        <div class="settings-form">
+
+          <div class="settings-section">
+            <h3>GitHub Integration</h3>
+            <div class="github-status" id="gh-status">
+              <div class="status-dot" id="gh-dot"></div>
+              <span id="gh-status-text">Not configured</span>
+            </div>
+            <div class="field">
+              <label>GitHub Personal Access Token</label>
+              <input type="password" id="s-token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"/>
+              <div style="font-size:.62rem;color:var(--muted);margin-top:6px;">Create at <strong>github.com → Settings → Developer Settings → Fine-grained tokens</strong>. Needs <em>Contents: Read & Write</em> permission for your repo.</div>
+            </div>
+            <div class="field">
+              <label>Repository (owner/repo)</label>
+              <input type="text" id="s-repo" placeholder="yourname/the-signal"/>
+            </div>
+            <div class="field">
+              <label>Branch</label>
+              <input type="text" id="s-branch" placeholder="main"/>
+            </div>
+            <div style="display:flex;gap:10px;margin-top:8px;">
+              <button class="btn btn-ghost" onclick="testGitHub()">🔗 Test Connection</button>
+              <button class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <h3>Site Info</h3>
+            <div class="field">
+              <label>Site Title</label>
+              <input type="text" id="s-title" placeholder="THE SIGNAL"/>
+            </div>
+            <div class="field">
+              <label>Tagline</label>
+              <input type="text" id="s-tagline" placeholder="Truth. Context. Clarity."/>
+            </div>
+            <button class="btn btn-primary" onclick="saveSiteInfo()">Save Site Info</button>
+          </div>
+
+          <div class="settings-section">
+            <h3>Admin Password</h3>
+            <div class="field">
+              <label>New Password</label>
+              <input type="password" id="s-newpw" placeholder="At least 6 characters"/>
+            </div>
+            <div class="field">
+              <label>Confirm Password</label>
+              <input type="password" id="s-newpw2" placeholder="Repeat password"/>
+            </div>
+            <button class="btn btn-warn" onclick="changePassword()">Change Password</button>
+          </div>
+
+          <div class="settings-section">
+            <h3>How to Publish</h3>
+            <div style="font-size:.75rem;color:var(--muted);line-height:1.8;">
+              1. Fill in GitHub token + repo + branch above and save.<br/>
+              2. When you click <strong>Save &amp; Publish</strong> on any article, this admin panel pushes <code>data.json</code> directly to your GitHub repo.<br/>
+              3. GitHub Pages automatically rebuilds in ~30 seconds.<br/>
+              4. Your live site reads <code>data.json</code> and renders the new article instantly.<br/><br/>
+              <strong>No coding, no command line needed.</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="confirm-modal">
+  <div class="modal">
+    <h2 id="modal-title">Confirm Delete</h2>
+    <p id="modal-body">Are you sure you want to delete this article? This cannot be undone.</p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-danger" id="modal-confirm">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- SAVING OVERLAY -->
+<div class="saving-overlay" id="saving-overlay">
+  <div class="spinner"></div>
+  <span>Publishing to GitHub…</span>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════
+let DB = null; // loaded data.json
+let currentFilter = 'all';
+
+// ── SETTINGS (localStorage) ───────────────────────
+function getSetting(k,def=''){return localStorage.getItem('sg_'+k)||def;}
+function setSetting(k,v){localStorage.setItem('sg_'+k,v);}
+
+// ══════════════════════════════════════════════════
+// AUTH
+// ══════════════════════════════════════════════════
+function doLogin(){
+  const pw=document.getElementById('login-pw').value;
+  const stored=getSetting('adminpw','signal123');
+  if(pw===stored){
+    setSetting('authed','1');
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('app').style.display='block';
+    loadData();
+  } else {
+    document.getElementById('login-err').textContent='Incorrect password.';
+    document.getElementById('login-pw').style.borderColor='var(--accent)';
+  }
+}
+function doLogout(){setSetting('authed','');location.reload();}
+document.getElementById('login-pw').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+(function(){if(getSetting('authed')==='1'){document.getElementById('login-screen').style.display='none';document.getElementById('app').style.display='block';loadData();}})();
+
+// ══════════════════════════════════════════════════
+// LOAD DATA
+// ══════════════════════════════════════════════════
+async function loadData(){
+  try{
+    const r=await fetch('data.json?v='+Date.now());
+    DB=await r.json();
+    renderDashboard();
+    renderArticleTable();
+    renderTicker();
+    renderSettingsForm();
+  }catch(e){
+    toast('Could not load data.json — check the file exists','error');
+    DB={site:{title:'THE SIGNAL',tagline:'Truth. Context. Clarity.'},ticker:[],articles:[]};
+    renderDashboard();
+  }
+}
+
+// ══════════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════════
+function showPanel(name){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('panel-'+name).classList.add('active');
+  const ni=document.getElementById('nav-'+name);
+  if(ni)ni.classList.add('active');
+}
+
+// ══════════════════════════════════════════════════
+// DASHBOARD
+// ══════════════════════════════════════════════════
+function renderDashboard(){
+  if(!DB)return;
+  const arts=DB.articles||[];
+  const cats={geopolitics:0,tech:0,sports:0,media:0,factcheck:0};
+  arts.forEach(a=>{if(cats[a.category]!==undefined)cats[a.category]++;});
+  document.getElementById('dash-stats').innerHTML=`
+    <div class="stat-card accent"><div class="stat-num">${arts.length}</div><div class="stat-label">Total Articles</div></div>
+    <div class="stat-card"><div class="stat-num">${arts.filter(a=>a.featured).length}</div><div class="stat-label">Featured</div></div>
+    <div class="stat-card"><div class="stat-num">${cats.factcheck}</div><div class="stat-label">Fact Checks</div></div>
+    <div class="stat-card"><div class="stat-num">${cats.geopolitics}</div><div class="stat-label">Geopolitics</div></div>
+    <div class="stat-card"><div class="stat-num">${cats.tech}</div><div class="stat-label">Tech</div></div>
+    <div class="stat-card"><div class="stat-num">${cats.sports}</div><div class="stat-label">Sports</div></div>
+  `;
+  const recent=arts.slice(0,5);
+  document.getElementById('dash-recent').innerHTML=recent.length?recent.map(a=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);">
+      <div style="font-family:'Playfair Display',serif;font-size:.85rem;color:var(--text);max-width:60%">${a.title}</div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <span class="badge badge-${a.category}">${a.category}</span>
+        <button class="btn btn-ghost btn-sm" onclick="editArticle('${a.id}')">Edit</button>
+      </div>
+    </div>
+  `).join(''):'<div style="color:var(--muted);font-size:.75rem;padding:20px 0">No articles yet. Click "New Article" to get started.</div>';
+}
+
+// ══════════════════════════════════════════════════
+// ARTICLE TABLE
+// ══════════════════════════════════════════════════
+function renderArticleTable(){
+  if(!DB)return;
+  const arts=DB.articles||[];
+  const filtered=currentFilter==='all'?arts:arts.filter(a=>a.category===currentFilter);
+  document.getElementById('articles-tbody').innerHTML=filtered.length?filtered.map(a=>`
+    <tr>
+      <td><div class="art-title-cell">${a.title}</div></td>
+      <td><span class="badge badge-${a.category}">${a.category}</span></td>
+      <td style="color:var(--muted)">${a.author}</td>
+      <td style="color:var(--muted)">${new Date(a.date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</td>
+      <td>
+        ${a.featured?'<span class="badge badge-featured">Featured</span>':''}
+        ${a.heroCard?'<span class="badge" style="background:rgba(58,176,200,.12);color:var(--cyan)">Hero</span>':''}
+        ${a.factCheck?'<span class="badge badge-factcheck">FC</span>':''}
+      </td>
+      <td><div class="actions-cell">
+        <button class="btn btn-ghost btn-sm" onclick="editArticle('${a.id}')">Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="confirmDelete('${a.id}')">Del</button>
+      </div></td>
+    </tr>
+  `).join(''):`<tr><td colspan="6"><div class="empty-state"><div class="big">📰</div>No articles in this category</div></td></tr>`;
+}
+function filterArticles(cat,el){
+  currentFilter=cat;
+  document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');
+  renderArticleTable();
+}
+
+// ══════════════════════════════════════════════════
+// EDITOR
+// ══════════════════════════════════════════════════
+function newArticle(){
+  document.getElementById('ed-id').value='';
+  document.getElementById('editor-title').textContent='New Article';
+  document.getElementById('ed-title').value='';
+  document.getElementById('ed-excerpt').value='';
+  document.getElementById('ed-content').value='';
+  document.getElementById('ed-author').value='';
+  document.getElementById('ed-authorTitle').value='';
+  document.getElementById('ed-category').value='geopolitics';
+  document.getElementById('ed-readTime').value='5';
+  document.getElementById('ed-date').value=new Date().toISOString().slice(0,16);
+  document.getElementById('ed-image').value='';
+  document.getElementById('ed-tags').value='';
+  document.getElementById('ed-featured').checked=false;
+  document.getElementById('ed-heroCard').checked=false;
+  document.getElementById('ed-factCheck2').checked=false;
+  document.getElementById('fc-extra2').style.display='none';
+  document.getElementById('ed-verdict2').value='false';
+  document.getElementById('ed-source2').value='';
+  showPanel('editor');
+}
+
+function editArticle(id){
+  if(!DB)return;
+  const a=DB.articles.find(x=>x.id===id);
+  if(!a)return;
+  document.getElementById('ed-id').value=a.id;
+  document.getElementById('editor-title').textContent='Edit Article';
+  document.getElementById('ed-title').value=a.title||'';
+  document.getElementById('ed-excerpt').value=a.excerpt||'';
+  document.getElementById('ed-content').value=a.content||'';
+  document.getElementById('ed-author').value=a.author||'';
+  document.getElementById('ed-authorTitle').value=a.authorTitle||'';
+  document.getElementById('ed-category').value=a.category||'geopolitics';
+  document.getElementById('ed-readTime').value=a.readTime||5;
+  document.getElementById('ed-date').value=a.date?a.date.slice(0,16):'';
+  document.getElementById('ed-image').value=a.image||'';
+  document.getElementById('ed-tags').value=(a.tags||[]).join(', ');
+  document.getElementById('ed-featured').checked=!!a.featured;
+  document.getElementById('ed-heroCard').checked=!!a.heroCard;
+  document.getElementById('ed-factCheck2').checked=!!a.factCheck;
+  if(a.factCheck){document.getElementById('fc-extra2').style.display='block';}
+  else{document.getElementById('fc-extra2').style.display='none';}
+  document.getElementById('ed-verdict2').value=a.verdict||'false';
+  document.getElementById('ed-source2').value=a.source||'';
+  showPanel('editor');
+}
+
+function toggleFcFields2(){
+  const on=document.getElementById('ed-factCheck2').checked;
+  document.getElementById('fc-extra2').style.display=on?'block':'none';
+}
+function toggleFcFields(){
+  const on=document.getElementById('ed-factCheck').checked;
+  document.getElementById('fc-extra').style.display=on?'block':'none';
+}
+
+function collectArticle(){
+  const id=document.getElementById('ed-id').value||String(Date.now());
+  return {
+    id,
+    slug:document.getElementById('ed-title').value.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''),
+    title:document.getElementById('ed-title').value.trim(),
+    excerpt:document.getElementById('ed-excerpt').value.trim(),
+    content:document.getElementById('ed-content').value.trim(),
+    author:document.getElementById('ed-author').value.trim(),
+    authorTitle:document.getElementById('ed-authorTitle').value.trim(),
+    category:document.getElementById('ed-category').value,
+    readTime:parseInt(document.getElementById('ed-readTime').value)||5,
+    date:new Date(document.getElementById('ed-date').value).toISOString(),
+    image:document.getElementById('ed-image').value.trim(),
+    tags:document.getElementById('ed-tags').value.split(',').map(t=>t.trim()).filter(Boolean),
+    featured:document.getElementById('ed-featured').checked,
+    heroCard:document.getElementById('ed-heroCard').checked,
+    factCheck:document.getElementById('ed-factCheck2').checked,
+    verdict:document.getElementById('ed-verdict2').value,
+    source:document.getElementById('ed-source2').value.trim(),
+  };
+}
+
+async function saveArticle(){
+  const art=collectArticle();
+  if(!art.title){toast('Title is required','error');return;}
+  if(!art.author){toast('Author is required','error');return;}
+  if(!art.content){toast('Content is required','error');return;}
+  if(!DB)DB={site:{title:'THE SIGNAL',tagline:'Truth. Context. Clarity.'},ticker:[],articles:[]};
+  const idx=DB.articles.findIndex(a=>a.id===art.id);
+  if(idx>=0)DB.articles[idx]=art;
+  else DB.articles.unshift(art);
+  await pushToGitHub();
+}
+
+function previewArticle(){
+  const art=collectArticle();
+  if(!art.id||art.id===String(Date.now())){toast('Save the article first to preview it','error');return;}
+  window.open(`article.html?id=${art.id}`,'_blank');
+}
+
+// ══════════════════════════════════════════════════
+// TICKER
+// ══════════════════════════════════════════════════
+function renderTicker(){
+  if(!DB)return;
+  document.getElementById('ticker-textarea').value=(DB.ticker||[]).join('\n');
+}
+async function saveTicker(){
+  if(!DB)return;
+  DB.ticker=document.getElementById('ticker-textarea').value.split('\n').map(l=>l.trim()).filter(Boolean);
+  await pushToGitHub();
+}
+
+// ══════════════════════════════════════════════════
+// SETTINGS
+// ══════════════════════════════════════════════════
+function renderSettingsForm(){
+  document.getElementById('s-token').value=getSetting('gh_token');
+  document.getElementById('s-repo').value=getSetting('gh_repo');
+  document.getElementById('s-branch').value=getSetting('gh_branch','main');
+  if(DB){
+    document.getElementById('s-title').value=DB.site.title||'';
+    document.getElementById('s-tagline').value=DB.site.tagline||'';
+  }
+  updateGhStatus();
+}
+function saveSettings(){
+  setSetting('gh_token',document.getElementById('s-token').value.trim());
+  setSetting('gh_repo',document.getElementById('s-repo').value.trim());
+  setSetting('gh_branch',document.getElementById('s-branch').value.trim()||'main');
+  updateGhStatus();
+  toast('Settings saved!','success');
+}
+function updateGhStatus(){
+  const tok=getSetting('gh_token'),repo=getSetting('gh_repo');
+  const ok=tok&&repo;
+  document.getElementById('gh-dot').className='status-dot '+(ok?'ok':'err');
+  document.getElementById('gh-status-text').textContent=ok?`Connected to ${repo}`:'Not configured — add token and repo below';
+}
+async function testGitHub(){
+  const token=document.getElementById('s-token').value.trim();
+  const repo=document.getElementById('s-repo').value.trim();
+  if(!token||!repo){toast('Fill in token and repo first','error');return;}
+  try{
+    const r=await fetch(`https://api.github.com/repos/${repo}`,{headers:{'Authorization':'Bearer '+token,'Accept':'application/vnd.github+json'}});
+    if(r.ok){toast('✅ Connection successful!','success');}
+    else{const d=await r.json();toast('GitHub error: '+d.message,'error');}
+  }catch(e){toast('Connection failed: '+e.message,'error');}
+}
+async function saveSiteInfo(){
+  if(!DB)return;
+  DB.site.title=document.getElementById('s-title').value.trim();
+  DB.site.tagline=document.getElementById('s-tagline').value.trim();
+  await pushToGitHub();
+}
+function changePassword(){
+  const p1=document.getElementById('s-newpw').value;
+  const p2=document.getElementById('s-newpw2').value;
+  if(p1.length<6){toast('Password must be at least 6 characters','error');return;}
+  if(p1!==p2){toast('Passwords do not match','error');return;}
+  setSetting('adminpw',p1);
+  toast('Password changed!','success');
+  document.getElementById('s-newpw').value='';
+  document.getElementById('s-newpw2').value='';
+}
+
+// ══════════════════════════════════════════════════
+// GITHUB PUSH
+// ══════════════════════════════════════════════════
+async function pushToGitHub(){
+  const token=getSetting('gh_token');
+  const repo=getSetting('gh_repo');
+  const branch=getSetting('gh_branch','main');
+  const json=JSON.stringify(DB,null,2);
+
+  // Always save locally for preview
+  renderDashboard();
+  renderArticleTable();
+
+  if(!token||!repo){
+    toast('⚠️ GitHub not configured — changes saved locally only. Go to Settings to connect GitHub.','error');
+    showPanel('articles');
+    return;
+  }
+
+  document.getElementById('saving-overlay').classList.add('open');
+  try{
+    // Get current SHA
+    const fileRes=await fetch(`https://api.github.com/repos/${repo}/contents/data.json?ref=${branch}`,{
+      headers:{'Authorization':'Bearer '+token,'Accept':'application/vnd.github+json'}
+    });
+    let sha='';
+    if(fileRes.ok){const fd=await fileRes.json();sha=fd.sha;}
+
+    // Commit
+    const body={message:'[Admin] Update data.json',content:btoa(unescape(encodeURIComponent(json))),branch};
+    if(sha)body.sha=sha;
+
+    const putRes=await fetch(`https://api.github.com/repos/${repo}/contents/data.json`,{
+      method:'PUT',
+      headers:{'Authorization':'Bearer '+token,'Accept':'application/vnd.github+json','Content-Type':'application/json'},
+      body:JSON.stringify(body)
+    });
+    if(putRes.ok){
+      toast('✅ Published to GitHub! Site will update in ~30 seconds.','success');
+      document.getElementById('save-status').textContent='Saved '+new Date().toLocaleTimeString();
+    } else {
+      const d=await putRes.json();
+      toast('GitHub error: '+(d.message||'Unknown error'),'error');
+    }
+  }catch(e){
+    toast('Publish failed: '+e.message,'error');
+  }finally{
+    document.getElementById('saving-overlay').classList.remove('open');
+  }
+  showPanel('articles');
+}
+
+// ══════════════════════════════════════════════════
+// DELETE
+// ══════════════════════════════════════════════════
+let deleteTargetId=null;
+function confirmDelete(id){
+  deleteTargetId=id;
+  const a=DB.articles.find(x=>x.id===id);
+  document.getElementById('modal-body').textContent=`Delete "${a?a.title:'this article'}"? This cannot be undone.`;
+  document.getElementById('confirm-modal').classList.add('open');
+}
+document.getElementById('modal-confirm').onclick=async function(){
+  if(!deleteTargetId)return;
+  DB.articles=DB.articles.filter(a=>a.id!==deleteTargetId);
+  closeModal();
+  await pushToGitHub();
+  deleteTargetId=null;
+};
+function closeModal(){document.getElementById('confirm-modal').classList.remove('open');}
+
+// ══════════════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════════════
+let toastTimer=null;
+function toast(msg,type=''){
+  const el=document.getElementById('toast');
+  el.textContent=msg;
+  el.className='toast '+(type||'');
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>el.classList.remove('show'),4000);
+}
+</script>
+</body>
+</html>

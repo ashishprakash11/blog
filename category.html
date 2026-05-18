@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Category — THE SIGNAL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Serif+Display:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Literata:ital,opsz,wght@0,7..72,300;0,7..72,400;0,7..72,600;1,7..72,300;1,7..72,400&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#0b0d13;--surface:#13161f;--surface2:#1c2030;--border:#252a3a;--text:#e8e2d5;--muted:#7a7f94;--accent:#c8392b;--gold:#e8a832;--cyan:#3ab0c8;--green:#2dc483;--purple:#c47de8;--white:#f5f0e6;--T:.22s ease;}
+[data-theme="light"]{--bg:#f4f0e8;--surface:#ece8df;--surface2:#e2ddd4;--border:#ccc7bc;--text:#1e2030;--muted:#7a7080;--white:#0d0f1a;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Literata',Georgia,serif;font-size:16px;line-height:1.7;}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:999;opacity:.45;}
+a{color:inherit;text-decoration:none;}
+header{border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;background:rgba(11,13,19,.97);backdrop-filter:blur(14px);}
+[data-theme="light"] header{background:rgba(244,240,232,.97);}
+.header-top{display:flex;align-items:center;justify-content:space-between;padding:0 40px;height:64px;max-width:1400px;margin:0 auto;gap:14px;}
+.logo{font-family:'DM Serif Display',serif;font-size:1.85rem;letter-spacing:-.02em;color:var(--white);}
+.logo span{color:var(--accent);}
+.icon-btn{width:36px;height:36px;border-radius:50%;background:var(--surface2);border:1px solid var(--border);color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.95rem;transition:all var(--T);}
+.icon-btn:hover{color:var(--text);border-color:var(--muted);}
+nav{border-top:1px solid var(--border);max-width:1400px;margin:0 auto;padding:0 40px;display:flex;overflow-x:auto;scrollbar-width:none;}
+.nav-link{font-family:'IBM Plex Mono',monospace;font-size:.68rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:12px 18px;border-bottom:2px solid transparent;transition:all var(--T);white-space:nowrap;display:flex;align-items:center;gap:6px;}
+.nav-link.active{color:var(--white);border-bottom-color:var(--accent);}
+.nav-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.container{max-width:900px;margin:0 auto;padding:48px 40px;}
+.cat-header{margin-bottom:40px;padding-bottom:24px;border-bottom:1px solid var(--border);}
+.cat-label{font-family:'IBM Plex Mono',monospace;font-size:.62rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+.cat-title{font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:900;color:var(--white);}
+.cat-count{font-family:'IBM Plex Mono',monospace;font-size:.65rem;color:var(--muted);margin-top:8px;}
+.art-row{display:grid;grid-template-columns:1fr 100px;gap:20px;padding:24px 0;border-bottom:1px solid var(--border);transition:all var(--T);align-items:start;}
+.art-row:hover .art-title{color:var(--white);}
+.art-title{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:700;color:var(--text);line-height:1.3;transition:color var(--T);margin-bottom:8px;}
+.art-exc{font-size:.85rem;color:var(--muted);line-height:1.55;margin-bottom:10px;}
+.art-foot{display:flex;gap:12px;align-items:center;font-family:'IBM Plex Mono',monospace;font-size:.62rem;color:var(--muted);}
+.art-tags{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.art-thumb{width:100px;height:78px;border-radius:4px;overflow:hidden;}
+.art-thumb-in{width:100%;height:100%;transition:transform .4s ease;}
+.art-row:hover .art-thumb-in{transform:scale(1.05);}
+.i-geo,.i-geopolitics{background:linear-gradient(135deg,#1a2535,#0e1e2e);}
+.i-fact,.i-factcheck{background:linear-gradient(135deg,#2a1215,#1a0a0c);}
+.i-tech{background:linear-gradient(135deg,#0f2018,#0a1a14);}
+.i-sport,.i-sports{background:linear-gradient(135deg,#241a08,#1a1206);}
+.i-media{background:linear-gradient(135deg,#1e1228,#140d1e);}
+.i-pat{width:100%;height:100%;background-image:repeating-linear-gradient(45deg,transparent,transparent 8px,rgba(255,255,255,.03) 8px,rgba(255,255,255,.03) 9px);}
+.chip{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:.58rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:2px 8px;border-radius:3px;}
+.ch-geopolitics,.ch-geo{background:rgba(58,176,200,.12);color:var(--cyan);}
+.ch-tech{background:rgba(45,196,131,.12);color:var(--green);}
+.ch-sports,.ch-sport{background:rgba(232,168,50,.12);color:var(--gold);}
+.ch-media{background:rgba(196,125,232,.12);color:var(--purple);}
+.ch-factcheck,.ch-fact{background:rgba(200,57,43,.15);color:#e87070;}
+.fc-row{background:var(--surface);border:1px solid var(--border);border-left:3px solid #e84040;padding:18px 22px;margin-bottom:14px;border-radius:0 4px 4px 0;transition:background var(--T);}
+.fc-row:hover{background:var(--surface2);}
+.verdict{font-family:'IBM Plex Mono',monospace;font-size:.62rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;display:flex;align-items:center;gap:7px;margin-bottom:6px;}
+.vdot{width:7px;height:7px;border-radius:50%;}
+.vf{background:#e84040;}.vm{background:var(--gold);}.vt{background:var(--green);}.vp{background:var(--cyan);}
+.vfc{color:#e84040;}.vmc{color:var(--gold);}.vtc{color:var(--green);}.vpc{color:var(--cyan);}
+footer{border-top:1px solid var(--border);padding:32px 40px;max-width:1400px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;}
+.f-logo{font-family:'DM Serif Display',serif;font-size:1.2rem;color:var(--white);}
+.f-logo span{color:var(--accent);}
+.f-copy{font-family:'IBM Plex Mono',monospace;font-size:.6rem;color:var(--muted);}
+@media(max-width:700px){.container{padding:24px 20px;}.art-row{grid-template-columns:1fr;}.art-thumb{display:none;}.header-top{padding:0 20px;}}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-top">
+    <a href="index.html" class="logo">THE <span>SIGNAL</span></a>
+    <div style="display:flex;gap:10px">
+      <button class="icon-btn" id="themeBtn" onclick="toggleTheme()">☾</button>
+      <a href="index.html" class="icon-btn">⌂</a>
+    </div>
+  </div>
+  <nav id="cat-nav">
+    <a class="nav-link" href="index.html"><span class="nav-dot" style="background:#e87070"></span>All</a>
+    <a class="nav-link" href="category.html?cat=factcheck"><span class="nav-dot" style="background:#e87070"></span>Fact Check</a>
+    <a class="nav-link" href="category.html?cat=geopolitics"><span class="nav-dot" style="background:var(--cyan)"></span>Geopolitics</a>
+    <a class="nav-link" href="category.html?cat=sports"><span class="nav-dot" style="background:var(--gold)"></span>Sports</a>
+    <a class="nav-link" href="category.html?cat=media"><span class="nav-dot" style="background:var(--purple)"></span>Media</a>
+    <a class="nav-link" href="category.html?cat=tech"><span class="nav-dot" style="background:var(--green)"></span>Tech</a>
+  </nav>
+</header>
+
+<div class="container" id="cat-container">
+  <div style="text-align:center;padding:60px 0;font-family:'IBM Plex Mono',monospace;color:var(--muted);">Loading...</div>
+</div>
+
+<footer>
+  <a href="index.html" class="f-logo">THE <span>SIGNAL</span></a>
+  <div class="f-copy">© 2026 The Signal · Independent journalism</div>
+</footer>
+
+<script>
+function toggleTheme(){const h=document.documentElement,l=h.getAttribute('data-theme')==='light';h.setAttribute('data-theme',l?'dark':'light');document.getElementById('themeBtn').textContent=l?'☾':'☀';localStorage.setItem('sg-theme',l?'dark':'light');}
+(function(){const s=localStorage.getItem('sg-theme')||'dark';document.documentElement.setAttribute('data-theme',s);document.getElementById('themeBtn').textContent=s==='light'?'☀':'☾';})();
+
+const CAT_LABELS={factcheck:'Fact Check',geopolitics:'Geopolitics',sports:'Sports',tech:'Tech & Science',media:'Media & Culture'};
+function chipHtml(cat){return `<span class="chip ch-${cat}">${CAT_LABELS[cat]||cat}</span>`;}
+function timeAgo(d){const diff=(Date.now()-new Date(d))/1000;if(diff<3600)return Math.floor(diff/60)+'m ago';if(diff<86400)return Math.floor(diff/3600)+'h ago';if(diff<172800)return 'Yesterday';return new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric'});}
+function verdictInfo(v){return {false:['vf','vfc','FALSE'],misleading:['vm','vmc','MISLEADING'],true:['vt','vtc','VERIFIED'],partial:['vp','vpc','PARTIALLY TRUE']}[v]||['vp','vpc','PARTIALLY TRUE'];}
+function thumbHtml(art){
+  if(art.image)return `<div class="art-thumb"><div class="art-thumb-in"><img src="${art.image}" style="width:100%;height:100%;object-fit:cover" alt=""/></div></div>`;
+  return `<div class="art-thumb"><div class="art-thumb-in i-${art.category}"><div class="i-pat"></div></div></div>`;
+}
+
+async function load(){
+  const cat=new URLSearchParams(location.search).get('cat')||'all';
+  // highlight nav
+  document.querySelectorAll('.nav-link').forEach(l=>{if(l.href.includes(cat))l.classList.add('active');});
+  
+  try{
+    const res=await fetch('data.json?v='+Date.now());
+    const data=await res.json();
+    const articles=cat==='all'?data.articles:data.articles.filter(a=>a.category===cat);
+    const label=CAT_LABELS[cat]||'All Stories';
+    document.title=`${label} — ${data.site.title}`;
+    
+    let html=`<div class="cat-header"><div class="cat-label">Category</div><h1 class="cat-title">${label}</h1><div class="cat-count">${articles.length} article${articles.length!==1?'s':''}</div></div>`;
+    
+    if(!articles.length){html+='<div style="padding:40px;text-align:center;font-family:\'IBM Plex Mono\',monospace;color:var(--muted)">No articles in this category yet.</div>';}
+    else if(cat==='factcheck'){
+      articles.forEach(a=>{
+        const [dot,txt,label]=verdictInfo(a.verdict);
+        html+=`<a href="article.html?id=${a.id}" style="display:block"><div class="fc-row"><div class="verdict ${txt}"><span class="vdot ${dot}"></span>${label}</div><div style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--text);line-height:1.35">${a.excerpt}</div>${a.source?`<div style="font-size:.75rem;color:var(--muted);margin-top:5px">${a.source}</div>`:''}</div></a>`;
+      });
+    } else {
+      articles.forEach(a=>{
+        html+=`<a class="art-row" href="article.html?id=${a.id}">
+          <div>
+            <div class="art-tags">${chipHtml(a.category)}<span style="font-family:'IBM Plex Mono',monospace;font-size:.58rem;color:var(--muted)">${timeAgo(a.date)}</span></div>
+            <div class="art-title">${a.title}</div>
+            <div class="art-exc">${a.excerpt}</div>
+            <div class="art-foot"><span>By ${a.author}</span><span>·</span><span>${a.readTime} min</span></div>
+          </div>
+          ${thumbHtml(a)}
+        </a>`;
+      });
+    }
+    document.getElementById('cat-container').innerHTML=html;
+  }catch(e){
+    document.getElementById('cat-container').innerHTML='<div style="padding:60px;text-align:center;font-family:\'IBM Plex Mono\',monospace;color:var(--muted)">Failed to load.</div>';
+  }
+}
+load();
+</script>
+</body>
+</html>
