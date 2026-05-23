@@ -1,856 +1,1036 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
-<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Admin — THE SIGNAL</title>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Playfair+Display:wght@700;900&family=DM+Serif+Display&family=Literata:opsz,wght@7..72,300;7..72,400&display=swap" rel="stylesheet"/>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>The Signal — Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=IBM+Plex+Mono:wght@400;600&family=Literata:wght@400;600&display=swap" rel="stylesheet"/>
 <style>
-:root{
-  --bg:#0b0d13;--surface:#13161f;--surface2:#1c2030;--border:#252a3a;
-  --text:#e8e2d5;--muted:#7a7f94;--accent:#c8392b;--gold:#e8a832;
-  --cyan:#3ab0c8;--green:#2dc483;--purple:#c47de8;--white:#f5f0e6;
-  --T:.2s ease;
-}
+:root{--bg:#0b0d13;--surface:#13161f;--s2:#1c2030;--s3:#232840;--border:#252a3a;--text:#e8e2d5;--muted:#7a7f94;--accent:#c8392b;--gold:#e8a832;--cyan:#3ab0c8;--green:#2dc483;--purple:#c47de8;--white:#f5f0e6;--T:.18s ease;--sidebar:240px;}
+[data-theme=light]{--bg:#f4f0e8;--surface:#ece8df;--s2:#e2ddd4;--s3:#d8d2c8;--border:#ccc7bc;--text:#1e2030;--muted:#7a7080;--white:#0d0f1a;}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-body{background:var(--bg);color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:14px;min-height:100vh;}
+html,body{height:100%;}
+body{background:var(--bg);color:var(--text);font-family:'Literata',Georgia,serif;font-size:14px;line-height:1.6;overflow:hidden;}
 a{color:inherit;text-decoration:none;}
+button,input,select,textarea{font-family:inherit;font-size:inherit;}
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:var(--surface);}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
 
-/* ── LOGIN ── */
-#login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px;}
-.login-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:48px;width:100%;max-width:400px;text-align:center;}
-.login-logo{font-family:'DM Serif Display',serif;font-size:2rem;color:var(--white);margin-bottom:4px;}
+/* ── LOGIN SCREEN ── */
+#loginScreen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px;}
+.login-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:40px;width:100%;max-width:420px;}
+.login-logo{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:900;color:var(--white);margin-bottom:4px;}
 .login-logo span{color:var(--accent);}
-.login-sub{font-size:.65rem;letter-spacing:.12em;color:var(--muted);margin-bottom:32px;text-transform:uppercase;}
-.login-label{font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:block;text-align:left;margin-bottom:6px;margin-top:16px;}
-.login-input{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:.85rem;padding:10px 14px;border-radius:6px;outline:none;transition:border-color var(--T);}
-.login-input:focus{border-color:var(--accent);}
-.login-btn{width:100%;background:var(--accent);color:#fff;border:none;padding:12px;border-radius:6px;font-family:'IBM Plex Mono',monospace;font-size:.75rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;margin-top:24px;transition:background var(--T);}
-.login-btn:hover{background:#a02d22;}
-.login-err{color:#e87070;font-size:.7rem;margin-top:12px;min-height:18px;}
-.login-hint{font-size:.62rem;color:var(--muted);margin-top:20px;line-height:1.6;}
+.login-sub{font-family:'IBM Plex Mono',monospace;font-size:.65rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:28px;}
+.login-box h2{font-family:'IBM Plex Mono',monospace;font-size:.75rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:20px;}
+.form-row{margin-bottom:16px;}
+.form-row label{display:block;font-family:'IBM Plex Mono',monospace;font-size:.62rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+.form-row input,.form-row select,.form-row textarea{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:6px;outline:none;transition:border-color var(--T);}
+.form-row input:focus,.form-row select:focus,.form-row textarea:focus{border-color:var(--accent);}
+.form-hint{font-size:.72rem;color:var(--muted);margin-top:4px;}
+.form-hint a{color:var(--cyan);}
+.btn{background:var(--accent);color:#fff;border:none;padding:11px 20px;border-radius:6px;font-family:'IBM Plex Mono',monospace;font-size:.7rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:background var(--T);display:inline-flex;align-items:center;gap:6px;}
+.btn:hover{background:#a02d22;}
+.btn.btn-secondary{background:var(--s2);color:var(--text);border:1px solid var(--border);}
+.btn.btn-secondary:hover{border-color:var(--muted);}
+.btn.btn-green{background:var(--green);}
+.btn.btn-green:hover{background:#22a468;}
+.btn.btn-sm{padding:7px 12px;font-size:.62rem;}
+.btn.btn-danger{background:#e84040;}
+.btn.btn-danger:hover{background:#c43030;}
+.btn:disabled{opacity:.5;cursor:default;}
+.login-err{background:rgba(200,57,43,.15);border:1px solid var(--accent);border-radius:6px;padding:10px 14px;font-size:.82rem;color:#e87070;margin-top:12px;}
 
-/* ── APP SHELL ── */
-#app{display:none;min-height:100vh;}
-.app-header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 32px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
-.app-logo{font-family:'DM Serif Display',serif;font-size:1.3rem;color:var(--white);}
-.app-logo span{color:var(--accent);}
-.app-logo small{font-family:'IBM Plex Mono',monospace;font-size:.55rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-left:10px;}
-.hdr-actions{display:flex;gap:10px;align-items:center;}
-.btn{display:inline-flex;align-items:center;gap:6px;font-family:'IBM Plex Mono',monospace;font-size:.68rem;font-weight:600;letter-spacing:.06em;padding:7px 14px;border-radius:6px;cursor:pointer;transition:all var(--T);border:none;white-space:nowrap;}
-.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--muted);}
-.btn-ghost:hover{border-color:var(--text);color:var(--text);}
-.btn-primary{background:var(--accent);color:#fff;}
-.btn-primary:hover{background:#a02d22;}
-.btn-success{background:var(--green);color:#fff;}
-.btn-success:hover{background:#22a06b;}
-.btn-warn{background:var(--gold);color:#0b0d13;}
-.btn-sm{font-size:.6rem;padding:5px 10px;}
-.btn-danger{background:rgba(200,57,43,.15);color:#e87070;border:1px solid rgba(200,57,43,.3);}
-.btn-danger:hover{background:rgba(200,57,43,.3);}
+/* ── LAYOUT ── */
+#app{display:grid;grid-template-columns:var(--sidebar) 1fr;height:100vh;display:none;}
 
-.app-body{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 56px);}
-.sidebar{background:var(--surface);border-right:1px solid var(--border);padding:24px 0;}
-.nav-section{font-size:.55rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);padding:0 20px 8px;}
-.nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;color:var(--muted);cursor:pointer;transition:all var(--T);font-size:.75rem;}
-.nav-item:hover{color:var(--text);background:var(--surface2);}
-.nav-item.active{color:var(--white);background:var(--surface2);border-right:2px solid var(--accent);}
-.nav-sep{height:1px;background:var(--border);margin:12px 0;}
-.main-content{padding:32px;overflow-y:auto;}
+/* ── SIDEBAR ── */
+.sidebar{background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;}
+.sb-logo{padding:20px 20px 16px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.sb-logo-text{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:900;color:var(--white);}
+.sb-logo-text span{color:var(--accent);}
+.sb-logo-sub{font-family:'IBM Plex Mono',monospace;font-size:.58rem;color:var(--muted);letter-spacing:.08em;margin-top:2px;}
+.sb-section{padding:14px 10px 6px;font-family:'IBM Plex Mono',monospace;font-size:.55rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.sb-nav{padding:4px 8px;}
+.sb-link{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:7px;font-family:'IBM Plex Mono',monospace;font-size:.68rem;font-weight:600;letter-spacing:.04em;color:var(--muted);cursor:pointer;transition:all var(--T);white-space:nowrap;}
+.sb-link:hover{background:var(--s2);color:var(--text);}
+.sb-link.active{background:rgba(200,57,43,.12);color:var(--accent);}
+.sb-link .ic{width:18px;text-align:center;font-size:.85rem;flex-shrink:0;}
+.sb-badge{margin-left:auto;background:var(--accent);color:#fff;font-size:.55rem;padding:2px 6px;border-radius:10px;}
+.sb-footer{margin-top:auto;padding:16px;border-top:1px solid var(--border);}
+.sb-footer-info{font-family:'IBM Plex Mono',monospace;font-size:.58rem;color:var(--muted);margin-bottom:10px;word-break:break-all;}
+.sb-footer-info strong{color:var(--text);display:block;margin-bottom:2px;}
+.btn-logout{width:100%;}
+
+/* ── MAIN ── */
+.main{display:flex;flex-direction:column;overflow:hidden;}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 28px;height:56px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.topbar-title{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--white);}
+.topbar-right{display:flex;align-items:center;gap:10px;}
+.save-status{font-family:'IBM Plex Mono',monospace;font-size:.62rem;color:var(--muted);display:flex;align-items:center;gap:6px;}
+.save-dot{width:7px;height:7px;border-radius:50%;background:var(--green);}
+.save-dot.saving{background:var(--gold);animation:pulse 1s infinite;}
+.save-dot.error{background:var(--accent);}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.icon-btn{width:34px;height:34px;border-radius:7px;background:var(--s2);border:1px solid var(--border);color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.9rem;transition:all var(--T);}
+.icon-btn:hover{color:var(--text);border-color:var(--muted);}
+.content{flex:1;overflow-y:auto;padding:28px;}
 
 /* ── PANELS ── */
 .panel{display:none;}
 .panel.active{display:block;}
 
 /* ── DASHBOARD ── */
-.dash-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px;margin-bottom:32px;}
-.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:20px;}
-.stat-num{font-size:2rem;font-weight:600;color:var(--white);}
-.stat-label{font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:4px;}
-.stat-card.accent{border-color:rgba(200,57,43,.4);background:rgba(200,57,43,.05);}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px;}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;position:relative;overflow:hidden;}
+.stat-card::before{content:'';position:absolute;bottom:-20px;right:-20px;width:70px;height:70px;border-radius:50%;opacity:.08;}
+.stat-card.s-acc::before{background:var(--accent);}
+.stat-card.s-cyan::before{background:var(--cyan);}
+.stat-card.s-gold::before{background:var(--gold);}
+.stat-card.s-green::before{background:var(--green);}
+.stat-num{font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:900;color:var(--white);display:block;}
+.stat-label{font-family:'IBM Plex Mono',monospace;font-size:.6rem;color:var(--muted);letter-spacing:.08em;margin-top:4px;}
+.stat-icon{position:absolute;top:16px;right:16px;font-size:1.4rem;opacity:.5;}
+.dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.dash-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;}
+.dash-card-title{font-family:'IBM Plex Mono',monospace;font-size:.62rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+.dash-post-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:all var(--T);}
+.dash-post-row:last-child{border-bottom:none;}
+.dash-post-row:hover{opacity:.8;}
+.dash-post-title{font-family:'Playfair Display',serif;font-size:.88rem;font-weight:700;color:var(--text);flex:1;line-height:1.3;}
+.cat-bar{display:flex;flex-direction:column;gap:8px;}
+.cat-bar-row{display:flex;align-items:center;gap:10px;}
+.cat-bar-label{font-family:'IBM Plex Mono',monospace;font-size:.62rem;color:var(--muted);width:80px;flex-shrink:0;}
+.cat-bar-track{flex:1;background:var(--border);border-radius:3px;height:6px;}
+.cat-bar-fill{height:6px;border-radius:3px;transition:width .6s ease;}
+.cat-bar-count{font-family:'IBM Plex Mono',monospace;font-size:.6rem;color:var(--muted);width:20px;text-align:right;}
 
-/* ── ARTICLE LIST ── */
-.page-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;}
-.page-title{font-size:1.1rem;color:var(--white);}
-.filter-bar{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
-.filter-chip{font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;padding:5px 12px;border-radius:20px;border:1px solid var(--border);color:var(--muted);cursor:pointer;transition:all var(--T);}
-.filter-chip:hover,.filter-chip.on{border-color:var(--accent);color:var(--accent);background:rgba(200,57,43,.08);}
-.article-table{width:100%;border-collapse:collapse;}
-.article-table th{font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:8px 12px;text-align:left;border-bottom:1px solid var(--border);}
-.article-table td{padding:12px;border-bottom:1px solid var(--border);font-size:.75rem;vertical-align:top;}
-.article-table tr:hover td{background:var(--surface2);}
-.art-title-cell{font-family:'Playfair Display',serif;font-size:.9rem;font-weight:700;color:var(--text);line-height:1.3;max-width:340px;}
-.badge{display:inline-block;font-size:.55rem;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:3px;}
-.badge-geo{background:rgba(58,176,200,.12);color:var(--cyan);}
-.badge-tech{background:rgba(45,196,131,.12);color:var(--green);}
-.badge-sports{background:rgba(232,168,50,.12);color:var(--gold);}
-.badge-media{background:rgba(196,125,232,.12);color:var(--purple);}
-.badge-factcheck{background:rgba(200,57,43,.15);color:#e87070;}
-.badge-featured{background:rgba(232,168,50,.15);color:var(--gold);}
-.actions-cell{display:flex;gap:6px;align-items:center;}
+/* ── TABLE ── */
+.table-controls{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
+.search-inp{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:6px;outline:none;font-family:'IBM Plex Mono',monospace;font-size:.68rem;transition:border-color var(--T);width:220px;}
+.search-inp:focus{border-color:var(--accent);}
+.filter-select{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:6px;outline:none;font-family:'IBM Plex Mono',monospace;font-size:.68rem;cursor:pointer;}
+.table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+table{width:100%;border-collapse:collapse;}
+thead tr{background:var(--s2);}
+th{font-family:'IBM Plex Mono',monospace;font-size:.6rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:12px 16px;text-align:left;white-space:nowrap;border-bottom:1px solid var(--border);}
+td{padding:12px 16px;border-bottom:1px solid var(--border);font-size:.85rem;vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(255,255,255,.02);}
+.chip{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:.55rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:2px 7px;border-radius:3px;}
+.c-geo{background:rgba(58,176,200,.12);color:var(--cyan);}
+.c-tech{background:rgba(45,196,131,.12);color:var(--green);}
+.c-sport{background:rgba(232,168,50,.12);color:var(--gold);}
+.c-media{background:rgba(196,125,232,.12);color:var(--purple);}
+.c-fact{background:rgba(200,57,43,.15);color:#e87070;}
+.c-default{background:var(--s2);color:var(--muted);}
+.post-title-cell{font-family:'Playfair Display',serif;font-weight:700;color:var(--white);max-width:320px;line-height:1.3;}
+.post-title-cell small{display:block;font-family:'IBM Plex Mono',monospace;font-size:.6rem;font-weight:400;color:var(--muted);margin-top:2px;}
+.action-btns{display:flex;gap:6px;white-space:nowrap;}
+.verdict-badge{display:inline-flex;align-items:center;gap:5px;font-family:'IBM Plex Mono',monospace;font-size:.6rem;font-weight:600;text-transform:uppercase;}
+.vdot{width:6px;height:6px;border-radius:50%;}
 
 /* ── EDITOR ── */
-.editor-grid{display:grid;grid-template-columns:1fr 300px;gap:24px;align-items:start;}
+.editor-layout{display:grid;grid-template-columns:1fr 280px;gap:20px;align-items:start;}
 .editor-main{display:flex;flex-direction:column;gap:16px;}
-.editor-sidebar{display:flex;flex-direction:column;gap:16px;}
-.field-group{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:20px;}
-.field-group-title{font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+.editor-sidebar{display:flex;flex-direction:column;gap:16px;position:sticky;top:0;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;}
+.card-title{font-family:'IBM Plex Mono',monospace;font-size:.62rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border);}
 .field{margin-bottom:14px;}
 .field:last-child{margin-bottom:0;}
-label{display:block;font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
-input[type=text],input[type=url],input[type=number],input[type=datetime-local],select,textarea{
-  width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);
-  font-family:'IBM Plex Mono',monospace;font-size:.8rem;padding:9px 12px;
-  border-radius:6px;outline:none;transition:border-color var(--T);}
-input:focus,select:focus,textarea:focus{border-color:var(--accent);}
-textarea.content-area{min-height:380px;resize:vertical;line-height:1.7;font-family:'Literata',serif;font-size:.9rem;}
-select option{background:var(--surface);}
-.toggle-row{display:flex;align-items:center;justify-content:space-between;}
-.toggle{position:relative;width:40px;height:22px;cursor:pointer;}
-.toggle input{opacity:0;width:0;height:0;}
-.toggle-slider{position:absolute;inset:0;background:var(--border);border-radius:11px;transition:background var(--T);}
-.toggle-slider::before{content:'';position:absolute;height:16px;width:16px;left:3px;bottom:3px;background:var(--muted);border-radius:50%;transition:transform var(--T),background var(--T);}
-.toggle input:checked+.toggle-slider{background:var(--accent);}
-.toggle input:checked+.toggle-slider::before{transform:translateX(18px);background:#fff;}
+.field label{display:block;font-family:'IBM Plex Mono',monospace;font-size:.6rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+.field input,.field select,.field textarea{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:9px 11px;border-radius:6px;outline:none;transition:border-color var(--T);}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);}
+.field textarea{resize:vertical;min-height:100px;line-height:1.7;}
+.title-input{font-family:'Playfair Display',serif!important;font-size:1.5rem!important;font-weight:700!important;background:var(--bg);border:1px solid var(--border);color:var(--white)!important;padding:12px 14px!important;border-radius:8px;outline:none;transition:border-color var(--T);width:100%;}
+.title-input:focus{border-color:var(--accent);}
+.content-editor{min-height:400px;background:var(--bg);border:1px solid var(--border);border-radius:8px;overflow:hidden;}
+.editor-toolbar{background:var(--s2);border-bottom:1px solid var(--border);padding:8px 12px;display:flex;gap:4px;flex-wrap:wrap;}
+.tb-btn{background:none;border:1px solid transparent;color:var(--muted);padding:4px 8px;border-radius:4px;cursor:pointer;font-size:.78rem;font-family:'IBM Plex Mono',monospace;transition:all var(--T);}
+.tb-btn:hover{background:var(--border);color:var(--text);}
+.editor-body{outline:none;padding:16px;min-height:350px;line-height:1.8;font-size:.95rem;color:var(--text);}
+.editor-body h2{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:var(--white);margin:1.5em 0 .5em;}
+.editor-body h3{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--white);margin:1.2em 0 .4em;}
+.editor-body p{margin-bottom:1em;}
+.editor-body blockquote{border-left:3px solid var(--accent);padding:10px 16px;background:var(--s2);margin:1em 0;border-radius:0 4px 4px 0;}
+.preview-toggle{display:flex;gap:0;border:1px solid var(--border);border-radius:6px;overflow:hidden;margin-bottom:12px;}
+.pt-btn{flex:1;background:none;border:none;padding:7px;font-family:'IBM Plex Mono',monospace;font-size:.62rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all var(--T);}
+.pt-btn.active{background:var(--s2);color:var(--white);}
+#previewPane{display:none;padding:20px;background:var(--bg);border:1px solid var(--border);border-radius:8px;min-height:400px;line-height:1.8;font-size:.95rem;}
+#previewPane h2{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:var(--white);margin:1.5em 0 .5em;}
+#previewPane p{margin-bottom:1em;}
+#previewPane blockquote{border-left:3px solid var(--accent);padding:10px 16px;background:var(--s2);margin:1em 0;}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);}
+.toggle-row:last-child{border-bottom:none;}
+.toggle-label{font-family:'IBM Plex Mono',monospace;font-size:.68rem;color:var(--text);}
+.toggle{width:38px;height:22px;background:var(--border);border-radius:20px;cursor:pointer;position:relative;transition:background var(--T);flex-shrink:0;}
+.toggle.on{background:var(--accent);}
+.toggle::after{content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform var(--T);}
+.toggle.on::after{transform:translateX(16px);}
+.verdict-select-row{display:flex;align-items:center;gap:6px;margin-top:6px;}
+.verdict-dot-preview{width:10px;height:10px;border-radius:50%;}
+.fc-section{background:rgba(200,57,43,.06);border:1px solid rgba(200,57,43,.2);border-radius:8px;padding:14px;}
 
 /* ── SETTINGS ── */
-.settings-form{max-width:600px;}
-.settings-section{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:24px;margin-bottom:20px;}
-.settings-section h3{font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:20px;}
-.github-status{display:flex;align-items:center;gap:8px;font-size:.72rem;padding:10px 14px;border-radius:6px;border:1px solid var(--border);margin-bottom:16px;}
-.status-dot{width:8px;height:8px;border-radius:50%;background:var(--muted);}
-.status-dot.ok{background:var(--green);}
-.status-dot.err{background:var(--accent);}
+.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.ticker-list{display:flex;flex-direction:column;gap:8px;}
+.ticker-item{display:flex;gap:8px;align-items:center;}
+.ticker-item input{flex:1;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:8px 10px;border-radius:5px;outline:none;font-family:'IBM Plex Mono',monospace;font-size:.68rem;transition:border-color var(--T);}
+.ticker-item input:focus{border-color:var(--accent);}
+.del-btn{width:28px;height:28px;background:var(--s2);border:1px solid var(--border);border-radius:5px;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.8rem;transition:all var(--T);}
+.del-btn:hover{border-color:#e84040;color:#e84040;}
+
+/* ── SUBSCRIBERS ── */
+.sub-count{font-family:'Playfair Display',serif;font-size:3rem;font-weight:900;color:var(--white);}
+.sub-label{font-family:'IBM Plex Mono',monospace;font-size:.65rem;color:var(--muted);margin-top:2px;}
+.empty-state{text-align:center;padding:60px 20px;color:var(--muted);}
+.empty-state h3{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--white);margin-bottom:8px;}
 
 /* ── TOAST ── */
-.toast{position:fixed;bottom:24px;right:24px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 20px;font-size:.75rem;color:var(--text);z-index:9999;transform:translateY(80px);opacity:0;transition:all .3s ease;max-width:320px;}
-.toast.show{transform:none;opacity:1;}
-.toast.success{border-color:rgba(45,196,131,.5);background:rgba(45,196,131,.08);}
-.toast.error{border-color:rgba(200,57,43,.5);background:rgba(200,57,43,.08);}
+.toast{position:fixed;bottom:24px;right:24px;z-index:999;display:flex;flex-direction:column;gap:8px;}
+.toast-item{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:12px 16px;font-family:'IBM Plex Mono',monospace;font-size:.68rem;color:var(--text);display:flex;align-items:center;gap:8px;box-shadow:0 4px 20px rgba(0,0,0,.3);animation:slideIn .3s ease;max-width:320px;}
+.toast-item.success{border-color:var(--green);color:var(--green);}
+.toast-item.error{border-color:var(--accent);color:#e87070;}
+.toast-item.info{border-color:var(--cyan);color:var(--cyan);}
+@keyframes slideIn{from{transform:translateX(20px);opacity:0}to{transform:translateX(0);opacity:1}}
 
 /* ── MODAL ── */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;align-items:center;justify-content:center;}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:500;display:none;align-items:center;justify-content:center;padding:20px;}
 .modal-overlay.open{display:flex;}
-.modal{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:32px;width:90%;max-width:440px;}
-.modal h2{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:var(--white);margin-bottom:12px;}
-.modal p{font-size:.8rem;color:var(--muted);line-height:1.6;margin-bottom:24px;}
-.modal-actions{display:flex;gap:10px;justify-content:flex-end;}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:28px;width:100%;max-width:460px;}
+.modal h3{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:var(--white);margin-bottom:8px;}
+.modal p{color:var(--muted);font-size:.9rem;margin-bottom:20px;}
+.modal-btns{display:flex;gap:10px;justify-content:flex-end;}
 
-/* ── MISC ── */
-.empty-state{text-align:center;padding:60px 20px;color:var(--muted);font-size:.75rem;}
-.empty-state .big{font-size:3rem;margin-bottom:12px;opacity:.3;}
-.saving-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:800;align-items:center;justify-content:center;font-size:.85rem;color:var(--white);}
-.saving-overlay.open{display:flex;}
-.spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;margin-right:14px;}
-@keyframes spin{to{transform:rotate(360deg)}}
-@media(max-width:800px){.editor-grid{grid-template-columns:1fr;}.app-body{grid-template-columns:1fr;}.sidebar{display:none;}}
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  #app{grid-template-columns:1fr;}
+  .sidebar{display:none;}
+  .stats-grid{grid-template-columns:1fr 1fr;}
+  .dash-grid{grid-template-columns:1fr;}
+  .editor-layout{grid-template-columns:1fr;}
+  .settings-grid{grid-template-columns:1fr;}
+}
 </style>
 </head>
 <body>
 
-<!-- LOGIN -->
-<div id="login-screen">
+<!-- LOGIN SCREEN -->
+<div id="loginScreen">
   <div class="login-box">
     <div class="login-logo">THE <span>SIGNAL</span></div>
-    <div class="login-sub">Admin Panel</div>
-    <label class="login-label">Admin Password</label>
-    <input class="login-input" type="password" id="login-pw" placeholder="Enter your admin password" onkeydown="if(event.key==='Enter')doLogin()"/>
-    <button class="login-btn" onclick="doLogin()">Sign In →</button>
-    <div class="login-err" id="login-err"></div>
-    <div class="login-hint">
-      First time? Set your password in <strong>Settings</strong> after logging in with the default: <code>signal123</code>
+    <div class="login-sub">Content Management System</div>
+    <h2>Connect to GitHub</h2>
+    <div class="form-row">
+      <label>GitHub Username / Org</label>
+      <input type="text" id="ghOwner" placeholder="e.g. johndoe" autocomplete="username"/>
     </div>
+    <div class="form-row">
+      <label>Repository Name</label>
+      <input type="text" id="ghRepo" placeholder="e.g. the-signal"/>
+    </div>
+    <div class="form-row">
+      <label>Personal Access Token</label>
+      <input type="password" id="ghToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"/>
+      <div class="form-hint">Create one at <a href="https://github.com/settings/tokens/new?scopes=repo" target="_blank">github.com/settings/tokens</a> — needs <strong>repo</strong> scope.</div>
+    </div>
+    <div class="form-row">
+      <label>Branch</label>
+      <input type="text" id="ghBranch" placeholder="main" value="main"/>
+    </div>
+    <button class="btn" onclick="doLogin()" id="loginBtn" style="width:100%;justify-content:center;margin-top:4px">Connect & Enter Admin →</button>
+    <div id="loginErr"></div>
   </div>
 </div>
 
 <!-- APP -->
 <div id="app">
-  <header class="app-header">
-    <div style="display:flex;align-items:center;gap:8px;">
-      <a href="index.html" target="_blank" class="app-logo">THE <span>SIGNAL</span></a>
-      <small class="app-logo" style="font-family:'IBM Plex Mono',monospace;font-size:.55rem;color:var(--muted);letter-spacing:.1em">ADMIN</small>
-    </div>
-    <div class="hdr-actions">
-      <span id="save-status" style="font-size:.62rem;color:var(--muted)"></span>
-      <a href="index.html" target="_blank" class="btn btn-ghost">View Site ↗</a>
-      <button class="btn btn-ghost" onclick="doLogout()">Sign Out</button>
-    </div>
-  </header>
 
-  <div class="app-body">
-    <nav class="sidebar">
-      <div class="nav-section" style="margin-bottom:8px">Content</div>
-      <div class="nav-item active" onclick="showPanel('dashboard')" id="nav-dashboard">📊 Dashboard</div>
-      <div class="nav-item" onclick="showPanel('articles')" id="nav-articles">📰 All Articles</div>
-      <div class="nav-item" onclick="newArticle()" id="nav-new">✍️ Write Article</div>
-      <div class="nav-sep"></div>
-      <div class="nav-section">Config</div>
-      <div class="nav-item" onclick="showPanel('ticker')" id="nav-ticker">📡 News Ticker</div>
-      <div class="nav-item" onclick="showPanel('settings')" id="nav-settings">⚙️ Settings</div>
-    </nav>
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sb-logo">
+      <div class="sb-logo-text">THE <span>SIGNAL</span></div>
+      <div class="sb-logo-sub">Admin Panel</div>
+    </div>
 
-    <main class="main-content">
+    <div class="sb-section">Content</div>
+    <div class="sb-nav">
+      <div class="sb-link active" onclick="nav('dashboard')" id="lnk-dashboard"><span class="ic">📊</span>Dashboard</div>
+      <div class="sb-link" onclick="nav('posts')" id="lnk-posts"><span class="ic">📰</span>All Posts <span class="sb-badge" id="postsBadge">0</span></div>
+      <div class="sb-link" onclick="nav('new-post')" id="lnk-new-post"><span class="ic">✏️</span>New Post</div>
+      <div class="sb-link" onclick="nav('fact-checks')" id="lnk-fact-checks"><span class="ic">🔍</span>Fact Checks</div>
+    </div>
+
+    <div class="sb-section">Site</div>
+    <div class="sb-nav">
+      <div class="sb-link" onclick="nav('settings')" id="lnk-settings"><span class="ic">⚙️</span>Site Settings</div>
+      <div class="sb-link" onclick="nav('ticker')" id="lnk-ticker"><span class="ic">📡</span>Breaking Ticker</div>
+      <div class="sb-link" onclick="nav('about')" id="lnk-about"><span class="ic">📖</span>About Page</div>
+    </div>
+
+    <div class="sb-section">Audience</div>
+    <div class="sb-nav">
+      <div class="sb-link" onclick="nav('subscribers')" id="lnk-subscribers"><span class="ic">📬</span>Subscribers <span class="sb-badge" id="subsBadge">0</span></div>
+    </div>
+
+    <div class="sb-section">Deploy</div>
+    <div class="sb-nav">
+      <div class="sb-link" onclick="openSite()" id="lnk-view"><span class="ic">🌐</span>View Live Site</div>
+      <div class="sb-link" onclick="openGH()" id="lnk-gh"><span class="ic">🐙</span>Open GitHub Repo</div>
+    </div>
+
+    <div class="sb-footer">
+      <div class="sb-footer-info">
+        <strong id="sbRepoLabel">Not connected</strong>
+        <span id="sbBranchLabel">branch: main</span>
+      </div>
+      <button class="btn btn-secondary btn-logout btn-sm" onclick="logout()">↩ Disconnect</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-title" id="topbarTitle">Dashboard</div>
+      <div class="topbar-right">
+        <div class="save-status"><div class="save-dot" id="saveDot"></div><span id="saveLabel">All saved</span></div>
+        <button class="icon-btn" onclick="toggleTheme()" title="Toggle theme" id="themeBtn">☾</button>
+        <a class="icon-btn" id="siteLink" href="#" target="_blank" title="View site">🌐</a>
+      </div>
+    </div>
+
+    <div class="content" id="mainContent">
 
       <!-- DASHBOARD -->
       <div class="panel active" id="panel-dashboard">
-        <div class="page-hdr">
-          <div class="page-title">Dashboard</div>
-          <button class="btn btn-primary" onclick="newArticle()">✍️ New Article</button>
+        <div class="stats-grid">
+          <div class="stat-card s-acc"><span class="stat-num" id="st-total">0</span><div class="stat-label">Total Posts</div><div class="stat-icon">📰</div></div>
+          <div class="stat-card s-cyan"><span class="stat-num" id="st-fact">0</span><div class="stat-label">Fact Checks</div><div class="stat-icon">🔍</div></div>
+          <div class="stat-card s-gold"><span class="stat-num" id="st-featured">0</span><div class="stat-label">Featured Posts</div><div class="stat-icon">⭐</div></div>
+          <div class="stat-card s-green"><span class="stat-num" id="st-subs">0</span><div class="stat-label">Subscribers</div><div class="stat-icon">📬</div></div>
         </div>
-        <div class="dash-grid" id="dash-stats"></div>
-        <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:20px;">
-          <div style="font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;">Recent Articles</div>
-          <div id="dash-recent"></div>
+        <div class="dash-grid">
+          <div class="dash-card">
+            <div class="dash-card-title">Recent Posts</div>
+            <div id="dash-recent"></div>
+          </div>
+          <div class="dash-card">
+            <div class="dash-card-title">Posts by Category</div>
+            <div class="cat-bar" id="dash-cats"></div>
+          </div>
         </div>
       </div>
 
-      <!-- ARTICLES LIST -->
-      <div class="panel" id="panel-articles">
-        <div class="page-hdr">
-          <div class="page-title">All Articles</div>
-          <button class="btn btn-primary" onclick="newArticle()">✍️ New Article</button>
+      <!-- ALL POSTS -->
+      <div class="panel" id="panel-posts">
+        <div class="table-controls">
+          <input class="search-inp" type="text" placeholder="Search posts…" oninput="filterPosts(this.value)" id="postSearch"/>
+          <select class="filter-select" onchange="filterPostsCat(this.value)" id="catFilter">
+            <option value="">All Categories</option>
+            <option value="geopolitics">Geopolitics</option>
+            <option value="fact-check">Fact Check</option>
+            <option value="sports">Sports</option>
+            <option value="tech">Tech</option>
+            <option value="media">Media</option>
+          </select>
+          <div style="margin-left:auto"><button class="btn btn-sm" onclick="nav('new-post')">+ New Post</button></div>
         </div>
-        <div class="filter-bar" id="filter-bar">
-          <div class="filter-chip on" onclick="filterArticles('all',this)">All</div>
-          <div class="filter-chip" onclick="filterArticles('geopolitics',this)">Geopolitics</div>
-          <div class="filter-chip" onclick="filterArticles('tech',this)">Tech</div>
-          <div class="filter-chip" onclick="filterArticles('sports',this)">Sports</div>
-          <div class="filter-chip" onclick="filterArticles('media',this)">Media</div>
-          <div class="filter-chip" onclick="filterArticles('factcheck',this)">Fact Check</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Title</th><th>Category</th><th>Author</th><th>Date</th><th>Actions</th></tr></thead>
+            <tbody id="postsTableBody"></tbody>
+          </table>
         </div>
-        <table class="article-table" id="articles-table">
-          <thead>
-            <tr>
-              <th>Title</th>
-              <th>Category</th>
-              <th>Author</th>
-              <th>Date</th>
-              <th>Flags</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="articles-tbody"></tbody>
-        </table>
       </div>
 
-      <!-- EDITOR -->
-      <div class="panel" id="panel-editor">
-        <div class="page-hdr">
-          <div style="display:flex;align-items:center;gap:12px;">
-            <button class="btn btn-ghost btn-sm" onclick="showPanel('articles')">← Back</button>
-            <div class="page-title" id="editor-title">New Article</div>
-          </div>
-          <div style="display:flex;gap:8px;">
-            <button class="btn btn-ghost" onclick="previewArticle()">👁 Preview</button>
-            <button class="btn btn-primary" onclick="saveArticle()">💾 Save & Publish</button>
-          </div>
-        </div>
-
-        <input type="hidden" id="ed-id"/>
-
-        <div class="editor-grid">
+      <!-- NEW / EDIT POST -->
+      <div class="panel" id="panel-new-post">
+        <input class="title-input" type="text" placeholder="Post title…" id="postTitle" style="margin-bottom:16px"/>
+        <div class="editor-layout">
           <div class="editor-main">
-            <div class="field-group">
-              <div class="field">
-                <label>Headline *</label>
-                <input type="text" id="ed-title" placeholder="Write a clear, compelling headline…"/>
+
+            <!-- CONTENT EDITOR -->
+            <div class="card" style="padding:0;overflow:hidden">
+              <div class="editor-toolbar">
+                <button class="tb-btn" onclick="fmt('bold')"><b>B</b></button>
+                <button class="tb-btn" onclick="fmt('italic')"><i>I</i></button>
+                <button class="tb-btn" onclick="fmtH2()">H2</button>
+                <button class="tb-btn" onclick="fmtH3()">H3</button>
+                <button class="tb-btn" onclick="fmtQuote()">❝</button>
+                <button class="tb-btn" onclick="fmtLink()">🔗</button>
+                <button class="tb-btn" onclick="fmtUL()">• List</button>
+                <button class="tb-btn" onclick="fmtHR()">─</button>
+                <div style="margin-left:auto;display:flex;gap:4px">
+                  <button class="tb-btn" id="editModeBtn" onclick="setEditorMode('edit')" style="color:var(--text)">✏ Edit</button>
+                  <button class="tb-btn" id="htmlModeBtn" onclick="setEditorMode('html')">‹› HTML</button>
+                  <button class="tb-btn" id="prevModeBtn" onclick="setEditorMode('preview')">👁 Preview</button>
+                </div>
               </div>
-              <div class="field">
-                <label>Excerpt / Deck (1–2 sentences shown on homepage)</label>
-                <textarea id="ed-excerpt" rows="3" style="resize:vertical" placeholder="A concise summary that draws readers in…"></textarea>
+              <div id="editorEdit" class="editor-body" contenteditable="true" oninput="onEditorInput()" spellcheck="true"></div>
+              <textarea id="editorHTML" style="display:none;width:100%;min-height:350px;background:var(--bg);border:none;padding:16px;color:var(--cyan);font-family:'IBM Plex Mono',monospace;font-size:.78rem;outline:none;resize:vertical;" oninput="syncFromHTML()"></textarea>
+              <div id="editorPreview" style="display:none;padding:16px;min-height:350px;font-size:.95rem;line-height:1.8;"></div>
+            </div>
+
+            <!-- EXCERPT -->
+            <div class="card">
+              <div class="card-title">Excerpt</div>
+              <textarea id="postExcerpt" style="width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:9px 11px;border-radius:6px;outline:none;resize:vertical;min-height:70px;font-size:.9rem;transition:border-color var(--T);" placeholder="Brief summary shown in article cards…"></textarea>
+            </div>
+
+            <!-- FACT CHECK -->
+            <div class="card" id="fcCard" style="display:none">
+              <div class="card-title">Fact Check Details</div>
+              <div class="fc-section">
+                <div class="field">
+                  <label>Verdict</label>
+                  <div class="verdict-select-row">
+                    <div class="verdict-dot-preview" id="verdictDotPreview" style="background:#e84040"></div>
+                    <select id="fcVerdict" style="flex:1;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:8px 10px;border-radius:6px;outline:none;" onchange="updateVerdictColor()">
+                      <option value="">— Select verdict —</option>
+                      <option value="false">❌ False</option>
+                      <option value="misleading">⚠️ Misleading</option>
+                      <option value="partially-true">〰️ Partially True</option>
+                      <option value="verified">✅ Verified</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="field">
+                  <label>The Claim Being Checked</label>
+                  <textarea id="fcClaim" placeholder="Exact quote or paraphrase of the claim…" style="width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:9px 11px;border-radius:6px;outline:none;resize:vertical;min-height:60px;transition:border-color var(--T);"></textarea>
+                </div>
+                <div class="field">
+                  <label>Source / Where it's circulating</label>
+                  <input type="text" id="fcSource" placeholder="e.g. Circulating on X — 2.4M impressions" style="width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:9px 11px;border-radius:6px;outline:none;transition:border-color var(--T);"/>
+                </div>
               </div>
             </div>
 
-            <div class="field-group">
-              <div class="field-group-title">Article Body</div>
-              <div style="font-size:.62rem;color:var(--muted);margin-bottom:10px;">Use blank lines between paragraphs. For headings start line with ## or ###.</div>
-              <div class="field">
-                <textarea class="content-area" id="ed-content" placeholder="Write your full article here…&#10;&#10;Separate paragraphs with blank lines.&#10;&#10;## Use double-hash for subheadings&#10;&#10;### Use triple-hash for smaller headings"></textarea>
-              </div>
-            </div>
           </div>
 
+          <!-- EDITOR SIDEBAR -->
           <div class="editor-sidebar">
-            <div class="field-group">
-              <div class="field-group-title">Publishing</div>
-              <div class="field">
-                <label>Category *</label>
-                <select id="ed-category">
-                  <option value="geopolitics">Geopolitics</option>
-                  <option value="tech">Tech & Science</option>
-                  <option value="sports">Sports</option>
-                  <option value="media">Media & Culture</option>
-                  <option value="factcheck">Fact Check</option>
+            <div class="card">
+              <div class="card-title">Publish</div>
+              <div class="field"><label>Status</label>
+                <select id="postStatus" style="width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:9px 11px;border-radius:6px;outline:none;">
+                  <option value="publish">✅ Published</option>
+                  <option value="draft">📝 Draft</option>
                 </select>
               </div>
-              <div class="field">
-                <label>Author *</label>
-                <input type="text" id="ed-author" placeholder="Full name"/>
-              </div>
-              <div class="field">
-                <label>Author Title</label>
-                <input type="text" id="ed-authorTitle" placeholder="e.g. Senior Correspondent"/>
-              </div>
-              <div class="field">
-                <label>Read Time (minutes)</label>
-                <input type="number" id="ed-readTime" min="1" max="60" value="5"/>
-              </div>
-              <div class="field">
-                <label>Publish Date</label>
-                <input type="datetime-local" id="ed-date"/>
+              <div class="field"><label>Publish Date</label><input type="date" id="postDate" style="width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:9px 11px;border-radius:6px;outline:none;"/></div>
+              <button class="btn btn-green" style="width:100%;justify-content:center;margin-top:4px" onclick="savePost()" id="savePostBtn">💾 Save Post</button>
+              <button class="btn btn-secondary" style="width:100%;justify-content:center;margin-top:8px" onclick="cancelEdit()">Cancel</button>
+              <div id="deletePostBtn" style="margin-top:8px;display:none">
+                <button class="btn btn-danger btn-sm" style="width:100%;justify-content:center" onclick="confirmDeletePost()">🗑 Delete Post</button>
               </div>
             </div>
 
-            <div class="field-group">
-              <div class="field-group-title">Media</div>
-              <div class="field">
-                <label>Cover Image URL</label>
-                <input type="url" id="ed-image" placeholder="https://…"/>
+            <div class="card">
+              <div class="card-title">Category & Tags</div>
+              <div class="field"><label>Category</label>
+                <select id="postCategory" style="width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:9px 11px;border-radius:6px;outline:none;" onchange="showFCCard()">
+                  <option value="geopolitics">🌐 Geopolitics</option>
+                  <option value="fact-check">🔍 Fact Check</option>
+                  <option value="sports">🏏 Sports</option>
+                  <option value="tech">💻 Tech</option>
+                  <option value="media">📺 Media</option>
+                </select>
               </div>
-              <div style="font-size:.62rem;color:var(--muted);">Tip: upload images to your GitHub repo's <code>/images/</code> folder and use relative path like <code>images/cover.jpg</code></div>
+              <div class="field"><label>Author</label><input type="text" id="postAuthor" placeholder="Author name"/></div>
+              <div class="field"><label>Tags (comma separated)</label><input type="text" id="postTags" placeholder="India, AI Policy, BRICS…"/></div>
             </div>
 
-            <div class="field-group">
-              <div class="field-group-title">Tags (comma separated)</div>
-              <div class="field">
-                <input type="text" id="ed-tags" placeholder="India, AI Policy, Tech"/>
-              </div>
-            </div>
-
-            <div class="field-group">
-              <div class="field-group-title">Homepage Placement</div>
-              <div class="field toggle-row">
-                <label style="margin-bottom:0">Featured (Cover Story)</label>
-                <label class="toggle"><input type="checkbox" id="ed-featured"/><span class="toggle-slider"></span></label>
-              </div>
-              <div class="field toggle-row" style="margin-top:10px">
-                <label style="margin-bottom:0">Hero Stack Card</label>
-                <label class="toggle"><input type="checkbox" id="ed-heroCard"/><span class="toggle-slider"></span></label>
+            <div class="card">
+              <div class="card-title">Options</div>
+              <div class="toggle-row"><span class="toggle-label">⭐ Featured Post</span><div class="toggle" id="toggleFeatured" onclick="this.classList.toggle('on')"></div></div>
+              <div class="toggle-row"><span class="toggle-label">🖼 Has Cover Image</span><div class="toggle" id="toggleCover" onclick="this.classList.toggle('on');toggleCoverField()"></div></div>
+              <div id="coverField" style="display:none;margin-top:10px">
+                <input type="url" id="postCoverImage" placeholder="https://… image URL" style="width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:8px 10px;border-radius:5px;outline:none;font-size:.82rem;"/>
               </div>
             </div>
 
-            <div class="field-group" id="fc-fields" style="display:none">
-              <div class="field-group-title">Fact Check</div>
-              <div class="field toggle-row">
-                <label style="margin-bottom:0">Is Fact Check</label>
-                <label class="toggle"><input type="checkbox" id="ed-factCheck" onchange="toggleFcFields()"/><span class="toggle-slider"></span></label>
-              </div>
-              <div id="fc-extra" style="display:none;margin-top:14px;">
-                <div class="field">
-                  <label>Verdict</label>
-                  <select id="ed-verdict">
-                    <option value="false">FALSE</option>
-                    <option value="misleading">MISLEADING</option>
-                    <option value="partial">PARTIALLY TRUE</option>
-                    <option value="true">VERIFIED / TRUE</option>
-                  </select>
-                </div>
-                <div class="field">
-                  <label>Source / Circulation Note</label>
-                  <input type="text" id="ed-source" placeholder="e.g. Circulating via X — 4M impressions"/>
-                </div>
-              </div>
-            </div>
-            <div class="field-group">
-              <div class="field toggle-row">
-                <label style="margin-bottom:0">Is Fact Check Article</label>
-                <label class="toggle"><input type="checkbox" id="ed-factCheck2" onchange="toggleFcFields2()"/><span class="toggle-slider"></span></label>
-              </div>
-              <div id="fc-extra2" style="display:none;margin-top:14px;">
-                <div class="field">
-                  <label>Verdict</label>
-                  <select id="ed-verdict2">
-                    <option value="false">FALSE</option>
-                    <option value="misleading">MISLEADING</option>
-                    <option value="partial">PARTIALLY TRUE</option>
-                    <option value="true">VERIFIED / TRUE</option>
-                  </select>
-                </div>
-                <div class="field">
-                  <label>Source / Circulation Note</label>
-                  <input type="text" id="ed-source2" placeholder="e.g. Circulating via X — 4M impressions"/>
-                </div>
-              </div>
+            <div class="card">
+              <div class="card-title">Slug</div>
+              <input type="text" id="postSlug" placeholder="auto-generated-slug" style="width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:8px 10px;border-radius:5px;outline:none;font-family:'IBM Plex Mono',monospace;font-size:.72rem;"/>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:.58rem;color:var(--muted);margin-top:5px">URL: /<span id="slugPreview">auto</span></div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- TICKER -->
-      <div class="panel" id="panel-ticker">
-        <div class="page-hdr">
-          <div class="page-title">News Ticker</div>
-          <button class="btn btn-primary" onclick="saveTicker()">💾 Save Ticker</button>
-        </div>
-        <div class="field-group" style="max-width:700px;">
-          <div style="font-size:.62rem;color:var(--muted);margin-bottom:16px;">One headline per line. These scroll in the red bar at the top of your site.</div>
-          <textarea id="ticker-textarea" rows="12" style="resize:vertical;width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:.8rem;padding:12px;border-radius:6px;outline:none;" placeholder="Enter one headline per line…"></textarea>
+      <!-- FACT CHECKS LIST -->
+      <div class="panel" id="panel-fact-checks">
+        <div style="margin-bottom:16px"><button class="btn btn-sm" onclick="nav('new-post');document.getElementById('postCategory').value='fact-check';showFCCard()">+ New Fact Check</button></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Claim</th><th>Verdict</th><th>Author</th><th>Date</th><th>Actions</th></tr></thead>
+            <tbody id="fcTableBody"></tbody>
+          </table>
         </div>
       </div>
 
       <!-- SETTINGS -->
       <div class="panel" id="panel-settings">
-        <div class="page-title" style="margin-bottom:24px;">Settings</div>
-        <div class="settings-form">
-
-          <div class="settings-section">
-            <h3>GitHub Integration</h3>
-            <div class="github-status" id="gh-status">
-              <div class="status-dot" id="gh-dot"></div>
-              <span id="gh-status-text">Not configured</span>
+        <div class="settings-grid">
+          <div>
+            <div class="card" style="margin-bottom:16px">
+              <div class="card-title">Site Identity</div>
+              <div class="field"><label>Site Name</label><input type="text" id="setSiteName" placeholder="THE SIGNAL"/></div>
+              <div class="field"><label>Tagline</label><input type="text" id="setTagline" placeholder="Truth. Context. Clarity."/></div>
+              <div class="field"><label>About Mission Statement</label><textarea id="setAbout" style="min-height:80px"></textarea></div>
             </div>
-            <div class="field">
-              <label>GitHub Personal Access Token</label>
-              <input type="password" id="s-token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"/>
-              <div style="font-size:.62rem;color:var(--muted);margin-top:6px;">Create at <strong>github.com → Settings → Developer Settings → Fine-grained tokens</strong>. Needs <em>Contents: Read & Write</em> permission for your repo.</div>
-            </div>
-            <div class="field">
-              <label>Repository (owner/repo)</label>
-              <input type="text" id="s-repo" placeholder="yourname/the-signal"/>
-            </div>
-            <div class="field">
-              <label>Branch</label>
-              <input type="text" id="s-branch" placeholder="main"/>
-            </div>
-            <div style="display:flex;gap:10px;margin-top:8px;">
-              <button class="btn btn-ghost" onclick="testGitHub()">🔗 Test Connection</button>
-              <button class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
+            <div class="card">
+              <div class="card-title">Newsletter</div>
+              <div class="field"><label>Newsletter Heading</label><input type="text" id="setNLHeading"/></div>
+              <div class="field"><label>Newsletter Description</label><textarea id="setNLDesc" style="min-height:60px"></textarea></div>
             </div>
           </div>
-
-          <div class="settings-section">
-            <h3>Site Info</h3>
-            <div class="field">
-              <label>Site Title</label>
-              <input type="text" id="s-title" placeholder="THE SIGNAL"/>
+          <div>
+            <div class="card" style="margin-bottom:16px">
+              <div class="card-title">Social Links</div>
+              <div class="field"><label>Twitter / X URL</label><input type="url" id="setTwitter" placeholder="https://x.com/thesignal"/></div>
+              <div class="field"><label>Instagram URL</label><input type="url" id="setInstagram" placeholder="https://instagram.com/thesignal"/></div>
+              <div class="field"><label>WhatsApp Channel URL</label><input type="url" id="setWhatsApp" placeholder="https://whatsapp.com/channel/…"/></div>
             </div>
-            <div class="field">
-              <label>Tagline</label>
-              <input type="text" id="s-tagline" placeholder="Truth. Context. Clarity."/>
-            </div>
-            <button class="btn btn-primary" onclick="saveSiteInfo()">Save Site Info</button>
-          </div>
-
-          <div class="settings-section">
-            <h3>Admin Password</h3>
-            <div class="field">
-              <label>New Password</label>
-              <input type="password" id="s-newpw" placeholder="At least 6 characters"/>
-            </div>
-            <div class="field">
-              <label>Confirm Password</label>
-              <input type="password" id="s-newpw2" placeholder="Repeat password"/>
-            </div>
-            <button class="btn btn-warn" onclick="changePassword()">Change Password</button>
-          </div>
-
-          <div class="settings-section">
-            <h3>How to Publish</h3>
-            <div style="font-size:.75rem;color:var(--muted);line-height:1.8;">
-              1. Fill in GitHub token + repo + branch above and save.<br/>
-              2. When you click <strong>Save &amp; Publish</strong> on any article, this admin panel pushes <code>data.json</code> directly to your GitHub repo.<br/>
-              3. GitHub Pages automatically rebuilds in ~30 seconds.<br/>
-              4. Your live site reads <code>data.json</code> and renders the new article instantly.<br/><br/>
-              <strong>No coding, no command line needed.</strong>
+            <div class="card">
+              <div class="card-title">Preview</div>
+              <div style="background:var(--s3);border-radius:8px;padding:16px;text-align:center">
+                <div style="font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:900;color:var(--white)">THE <span style="color:var(--accent)" id="prevSiteName">SIGNAL</span></div>
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:.62rem;color:var(--muted);margin-top:4px" id="prevTagline">Truth. Context. Clarity.</div>
+              </div>
             </div>
           </div>
         </div>
+        <div style="margin-top:16px"><button class="btn btn-green" onclick="saveSettings()">💾 Save Settings</button></div>
       </div>
 
-    </main>
-  </div>
-</div>
+      <!-- TICKER -->
+      <div class="panel" id="panel-ticker">
+        <div class="card" style="max-width:700px">
+          <div class="card-title">Breaking News Ticker</div>
+          <p style="font-size:.82rem;color:var(--muted);margin-bottom:16px">These items scroll across the top of every page. Drag to reorder. Leave blank to use latest post titles automatically.</p>
+          <div class="ticker-list" id="tickerList"></div>
+          <button class="btn btn-secondary btn-sm" onclick="addTickerItem()" style="margin-top:12px">+ Add Item</button>
+          <div style="margin-top:16px"><button class="btn btn-green" onclick="saveTicker()">💾 Save Ticker</button></div>
+        </div>
+      </div>
 
-<!-- MODAL -->
-<div class="modal-overlay" id="confirm-modal">
-  <div class="modal">
-    <h2 id="modal-title">Confirm Delete</h2>
-    <p id="modal-body">Are you sure you want to delete this article? This cannot be undone.</p>
-    <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-danger" id="modal-confirm">Delete</button>
+      <!-- ABOUT -->
+      <div class="panel" id="panel-about">
+        <div class="card" style="max-width:800px">
+          <div class="card-title">About Page Content</div>
+          <div class="field"><label>Mission Statement</label><textarea id="aboutMission" style="min-height:100px"></textarea></div>
+          <div class="field"><label>Editorial Standards (HTML or plain text)</label><textarea id="aboutEditorial" style="min-height:120px"></textarea></div>
+          <div class="field"><label>Team Members (JSON)</label>
+            <textarea id="aboutTeam" style="min-height:80px;font-family:'IBM Plex Mono',monospace;font-size:.72rem" placeholder='[{"name":"Meera Iyer","role":"Senior Correspondent"},{"name":"Li Wei","role":"Tech Editor"}]'></textarea>
+            <div class="form-hint">JSON array of {name, role, bio} objects</div>
+          </div>
+          <div style="margin-top:8px"><button class="btn btn-green" onclick="saveAbout()">💾 Save About Page</button></div>
+        </div>
+      </div>
+
+      <!-- SUBSCRIBERS -->
+      <div class="panel" id="panel-subscribers">
+        <div class="card" style="margin-bottom:20px;display:flex;align-items:center;gap:32px">
+          <div><div class="sub-count" id="subCount">0</div><div class="sub-label">Newsletter Subscribers</div></div>
+          <div style="margin-left:auto"><button class="btn btn-secondary btn-sm" onclick="exportSubs()">⬇ Export CSV</button></div>
+        </div>
+        <div class="table-wrap" id="subsTable" style="display:none">
+          <table>
+            <thead><tr><th>#</th><th>Email</th><th>Subscribed</th></tr></thead>
+            <tbody id="subsTableBody"></tbody>
+          </table>
+        </div>
+        <div class="empty-state" id="subsEmpty">
+          <h3>No subscribers yet</h3>
+          <p>Newsletter sign-ups from your site will appear here automatically.</p>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
 
-<!-- SAVING OVERLAY -->
-<div class="saving-overlay" id="saving-overlay">
-  <div class="spinner"></div>
-  <span>Publishing to GitHub…</span>
+<!-- DELETE CONFIRM MODAL -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal">
+    <h3>Delete this post?</h3>
+    <p>This action cannot be undone. The post will be permanently removed from your site.</p>
+    <div class="modal-btns">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-danger" onclick="deletePost()">Yes, Delete</button>
+    </div>
+  </div>
 </div>
 
-<!-- TOAST -->
-<div class="toast" id="toast"></div>
+<!-- TOAST CONTAINER -->
+<div class="toast" id="toastContainer"></div>
 
 <script>
-// ══════════════════════════════════════════════════
-// STATE
-// ══════════════════════════════════════════════════
-let DB = null; // loaded data.json
-let currentFilter = 'all';
+/* ══════════════════════════════════════════
+   THE SIGNAL CMS — Core
+   ══════════════════════════════════════════ */
 
-// ── SETTINGS (localStorage) ───────────────────────
-function getSetting(k,def=''){return localStorage.getItem('sg_'+k)||def;}
-function setSetting(k,v){localStorage.setItem('sg_'+k,v);}
+let GH = { owner:'', repo:'', token:'', branch:'main' };
+let DB = { settings:{}, subscribers:[], posts:[] };
+let editingPostId = null;
+let fileSHA = '';
+let editorMode = 'edit';
 
-// ══════════════════════════════════════════════════
-// AUTH
-// ══════════════════════════════════════════════════
-function doLogin(){
-  const pw=document.getElementById('login-pw').value;
-  const stored=getSetting('adminpw','signal123');
-  if(pw===stored){
-    setSetting('authed','1');
-    document.getElementById('login-screen').style.display='none';
-    document.getElementById('app').style.display='block';
-    loadData();
-  } else {
-    document.getElementById('login-err').textContent='Incorrect password.';
-    document.getElementById('login-pw').style.borderColor='var(--accent)';
+/* ── THEME ── */
+function toggleTheme(){
+  const h=document.documentElement, l=h.getAttribute('data-theme')==='light';
+  h.setAttribute('data-theme',l?'dark':'light');
+  document.getElementById('themeBtn').textContent=l?'☾':'☀';
+  localStorage.setItem('sg-theme',l?'dark':'light');
+}
+(function(){const s=localStorage.getItem('sg-theme')||'dark';document.documentElement.setAttribute('data-theme',s);document.getElementById('themeBtn').textContent=s==='light'?'☀':'☾';})();
+
+/* ── LOGIN ── */
+async function doLogin(){
+  const btn=document.getElementById('loginBtn');
+  const errEl=document.getElementById('loginErr');
+  GH.owner=document.getElementById('ghOwner').value.trim();
+  GH.repo=document.getElementById('ghRepo').value.trim();
+  GH.token=document.getElementById('ghToken').value.trim();
+  GH.branch=document.getElementById('ghBranch').value.trim()||'main';
+  if(!GH.owner||!GH.repo||!GH.token){errEl.innerHTML='<div class="login-err">Please fill in all fields.</div>';return;}
+  btn.textContent='Connecting…';btn.disabled=true;
+  try {
+    const ok = await loadDB();
+    if(!ok) throw new Error('Could not load posts.json — check repo name and token scope.');
+    localStorage.setItem('sg-gh',JSON.stringify(GH));
+    document.getElementById('loginScreen').style.display='none';
+    document.getElementById('app').style.display='grid';
+    setupApp();
+    toast('Connected to '+GH.owner+'/'+GH.repo,'success');
+  } catch(e) {
+    errEl.innerHTML='<div class="login-err">'+e.message+'</div>';
+    btn.textContent='Connect & Enter Admin →';btn.disabled=false;
   }
 }
-function doLogout(){setSetting('authed','');location.reload();}
-document.getElementById('login-pw').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
-(function(){if(getSetting('authed')==='1'){document.getElementById('login-screen').style.display='none';document.getElementById('app').style.display='block';loadData();}})();
 
-// ══════════════════════════════════════════════════
-// LOAD DATA
-// ══════════════════════════════════════════════════
-async function loadData(){
+/* ── GITHUB API ── */
+const API='https://api.github.com';
+async function ghFetch(path,method='GET',body=null){
+  const opts={method,headers:{'Authorization':'Bearer '+GH.token,'Content-Type':'application/json','X-GitHub-Api-Version':'2022-11-28'}};
+  if(body) opts.body=JSON.stringify(body);
+  const r=await fetch(API+path,opts);
+  if(!r.ok){const err=await r.json().catch(()=>({}));throw new Error(err.message||r.statusText);}
+  return r.json();
+}
+
+async function loadDB(){
   try{
-    const r=await fetch('data.json?v='+Date.now());
-    DB=await r.json();
-    renderDashboard();
-    renderArticleTable();
-    renderTicker();
-    renderSettingsForm();
+    const res=await ghFetch('/repos/'+GH.owner+'/'+GH.repo+'/contents/posts.json?ref='+GH.branch);
+    fileSHA=res.sha;
+    const content=JSON.parse(atob(res.content.replace(/\n/g,'')));
+    DB=content;
+    return true;
   }catch(e){
-    toast('Could not load data.json — check the file exists','error');
-    DB={site:{title:'THE SIGNAL',tagline:'Truth. Context. Clarity.'},ticker:[],articles:[]};
-    renderDashboard();
+    if(e.message.includes('Not Found')||e.message.includes('404')){
+      // File doesn't exist yet — create with defaults
+      DB={settings:{siteName:'THE SIGNAL',tagline:'Truth. Context. Clarity.',ticker:[],newsletter:{heading:'The Daily Signal',desc:'One briefing. Five stories.'},about:'',social:{}},subscribers:[],posts:[]};
+      await saveDB();
+      return true;
+    }
+    throw e;
   }
 }
 
-// ══════════════════════════════════════════════════
-// NAVIGATION
-// ══════════════════════════════════════════════════
-function showPanel(name){
+async function saveDB(){
+  setSaving(true);
+  try{
+    const content=btoa(unescape(encodeURIComponent(JSON.stringify(DB,null,2))));
+    const body={message:'CMS: update posts.json',content,branch:GH.branch};
+    if(fileSHA) body.sha=fileSHA;
+    const res=await ghFetch('/repos/'+GH.owner+'/'+GH.repo+'/contents/posts.json',fileSHA?'PUT':'POST',body);
+    fileSHA=res.content.sha;
+    setSaving(false,'Saved');
+    return true;
+  }catch(e){
+    setSaving(false,'Error saving',true);
+    toast('Save failed: '+e.message,'error');
+    return false;
+  }
+}
+
+function setSaving(saving,label='',err=false){
+  const dot=document.getElementById('saveDot');
+  const lbl=document.getElementById('saveLabel');
+  dot.className='save-dot'+(saving?' saving':err?' error':'');
+  lbl.textContent=saving?'Saving…':(label||'All saved');
+}
+
+/* ── SETUP ── */
+function setupApp(){
+  document.getElementById('sbRepoLabel').textContent=GH.owner+'/'+GH.repo;
+  document.getElementById('sbBranchLabel').textContent='branch: '+GH.branch;
+  const siteUrl='https://'+GH.owner+'.github.io/'+GH.repo;
+  document.getElementById('siteLink').href=siteUrl;
+  document.getElementById('postDate').value=new Date().toISOString().split('T')[0];
+  refreshAll();
+}
+
+function refreshAll(){
+  refreshDashboard();
+  refreshPostsTable();
+  refreshFCTable();
+  refreshSettings();
+  refreshTicker();
+  refreshSubscribers();
+  refreshAbout();
+  const total=DB.posts.length;
+  document.getElementById('postsBadge').textContent=total;
+  document.getElementById('subsBadge').textContent=DB.subscribers.length;
+}
+
+/* ── NAVIGATION ── */
+function nav(id){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  document.getElementById('panel-'+name).classList.add('active');
-  const ni=document.getElementById('nav-'+name);
-  if(ni)ni.classList.add('active');
+  document.querySelectorAll('.sb-link').forEach(l=>l.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  const lnk=document.getElementById('lnk-'+id);
+  if(lnk) lnk.classList.add('active');
+  const titles={'dashboard':'Dashboard','posts':'All Posts','new-post':editingPostId?'Edit Post':'New Post','fact-checks':'Fact Checks','settings':'Site Settings','ticker':'Breaking Ticker','about':'About Page','subscribers':'Subscribers'};
+  document.getElementById('topbarTitle').textContent=titles[id]||id;
 }
 
-// ══════════════════════════════════════════════════
-// DASHBOARD
-// ══════════════════════════════════════════════════
-function renderDashboard(){
-  if(!DB)return;
-  const arts=DB.articles||[];
-  const cats={geopolitics:0,tech:0,sports:0,media:0,factcheck:0};
-  arts.forEach(a=>{if(cats[a.category]!==undefined)cats[a.category]++;});
-  document.getElementById('dash-stats').innerHTML=`
-    <div class="stat-card accent"><div class="stat-num">${arts.length}</div><div class="stat-label">Total Articles</div></div>
-    <div class="stat-card"><div class="stat-num">${arts.filter(a=>a.featured).length}</div><div class="stat-label">Featured</div></div>
-    <div class="stat-card"><div class="stat-num">${cats.factcheck}</div><div class="stat-label">Fact Checks</div></div>
-    <div class="stat-card"><div class="stat-num">${cats.geopolitics}</div><div class="stat-label">Geopolitics</div></div>
-    <div class="stat-card"><div class="stat-num">${cats.tech}</div><div class="stat-label">Tech</div></div>
-    <div class="stat-card"><div class="stat-num">${cats.sports}</div><div class="stat-label">Sports</div></div>
-  `;
-  const recent=arts.slice(0,5);
-  document.getElementById('dash-recent').innerHTML=recent.length?recent.map(a=>`
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);">
-      <div style="font-family:'Playfair Display',serif;font-size:.85rem;color:var(--text);max-width:60%">${a.title}</div>
-      <div style="display:flex;gap:8px;align-items:center;">
-        <span class="badge badge-${a.category}">${a.category}</span>
-        <button class="btn btn-ghost btn-sm" onclick="editArticle('${a.id}')">Edit</button>
-      </div>
-    </div>
-  `).join(''):'<div style="color:var(--muted);font-size:.75rem;padding:20px 0">No articles yet. Click "New Article" to get started.</div>';
+function openSite(){window.open('https://'+GH.owner+'.github.io/'+GH.repo,'_blank');}
+function openGH(){window.open('https://github.com/'+GH.owner+'/'+GH.repo,'_blank');}
+
+/* ── DASHBOARD ── */
+function refreshDashboard(){
+  const posts=DB.posts||[];
+  document.getElementById('st-total').textContent=posts.length;
+  document.getElementById('st-fact').textContent=posts.filter(p=>p.category==='fact-check').length;
+  document.getElementById('st-featured').textContent=posts.filter(p=>p.featured).length;
+  document.getElementById('st-subs').textContent=(DB.subscribers||[]).length;
+  // Recent posts
+  const rc=document.getElementById('dash-recent');
+  rc.innerHTML='';
+  const chip={'geopolitics':'c-geo','fact-check':'c-fact','sports':'c-sport','tech':'c-tech','media':'c-media'};
+  posts.slice(-5).reverse().forEach(p=>{
+    const r=document.createElement('div');r.className='dash-post-row';r.onclick=()=>editPost(p.id);
+    r.innerHTML=`<span class="chip ${chip[p.category]||'c-default'}">${p.category}</span><div class="dash-post-title">${esc(p.title)}</div><span style="font-family:'IBM Plex Mono',monospace;font-size:.58rem;color:var(--muted)">${p.date}</span>`;
+    rc.appendChild(r);
+  });
+  if(!posts.length) rc.innerHTML='<div style="color:var(--muted);font-size:.85rem;padding:12px 0">No posts yet — create your first post!</div>';
+  // Cat breakdown
+  const cats={'geopolitics':0,'fact-check':0,'sports':0,'tech':0,'media':0};
+  posts.forEach(p=>{if(cats[p.category]!==undefined)cats[p.category]++;});
+  const catColors={'geopolitics':'var(--cyan)','fact-check':'#e87070','sports':'var(--gold)','tech':'var(--green)','media':'var(--purple)'};
+  const max=Math.max(1,...Object.values(cats));
+  const cc=document.getElementById('dash-cats');cc.innerHTML='';
+  Object.entries(cats).forEach(([k,v])=>{
+    const row=document.createElement('div');row.className='cat-bar-row';
+    row.innerHTML=`<div class="cat-bar-label">${k}</div><div class="cat-bar-track"><div class="cat-bar-fill" style="width:${Math.round(v/max*100)}%;background:${catColors[k]}"></div></div><div class="cat-bar-count">${v}</div>`;
+    cc.appendChild(row);
+  });
 }
 
-// ══════════════════════════════════════════════════
-// ARTICLE TABLE
-// ══════════════════════════════════════════════════
-function renderArticleTable(){
-  if(!DB)return;
-  const arts=DB.articles||[];
-  const filtered=currentFilter==='all'?arts:arts.filter(a=>a.category===currentFilter);
-  document.getElementById('articles-tbody').innerHTML=filtered.length?filtered.map(a=>`
-    <tr>
-      <td><div class="art-title-cell">${a.title}</div></td>
-      <td><span class="badge badge-${a.category}">${a.category}</span></td>
-      <td style="color:var(--muted)">${a.author}</td>
-      <td style="color:var(--muted)">${new Date(a.date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</td>
-      <td>
-        ${a.featured?'<span class="badge badge-featured">Featured</span>':''}
-        ${a.heroCard?'<span class="badge" style="background:rgba(58,176,200,.12);color:var(--cyan)">Hero</span>':''}
-        ${a.factCheck?'<span class="badge badge-factcheck">FC</span>':''}
-      </td>
-      <td><div class="actions-cell">
-        <button class="btn btn-ghost btn-sm" onclick="editArticle('${a.id}')">Edit</button>
-        <button class="btn btn-danger btn-sm" onclick="confirmDelete('${a.id}')">Del</button>
-      </div></td>
-    </tr>
-  `).join(''):`<tr><td colspan="6"><div class="empty-state"><div class="big">📰</div>No articles in this category</div></td></tr>`;
+/* ── POSTS TABLE ── */
+function refreshPostsTable(filter='',catFilter=''){
+  const chip={'geopolitics':'c-geo','fact-check':'c-fact','sports':'c-sport','tech':'c-tech','media':'c-media'};
+  const tb=document.getElementById('postsTableBody');tb.innerHTML='';
+  let posts=DB.posts||[];
+  if(filter) posts=posts.filter(p=>p.title.toLowerCase().includes(filter.toLowerCase())||p.author.toLowerCase().includes(filter.toLowerCase()));
+  if(catFilter) posts=posts.filter(p=>p.category===catFilter);
+  if(!posts.length){tb.innerHTML='<tr><td colspan="5" style="text-align:center;padding:32px;color:var(--muted)">No posts found</td></tr>';return;}
+  [...posts].reverse().forEach(p=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td><div class="post-title-cell">${esc(p.title)}<small>${esc(p.slug||'')}</small></div></td><td><span class="chip ${chip[p.category]||'c-default'}">${esc(p.category)}</span></td><td style="font-family:'IBM Plex Mono',monospace;font-size:.7rem;color:var(--muted)">${esc(p.author)}</td><td style="font-family:'IBM Plex Mono',monospace;font-size:.7rem;color:var(--muted)">${p.date}</td><td><div class="action-btns"><button class="btn btn-secondary btn-sm" onclick="editPost('${p.id}')">✏ Edit</button><button class="btn btn-danger btn-sm" onclick="confirmDeletePostById('${p.id}')">🗑</button></div></td>`;
+    tb.appendChild(tr);
+  });
 }
-function filterArticles(cat,el){
-  currentFilter=cat;
-  document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('on'));
-  el.classList.add('on');
-  renderArticleTable();
+function filterPosts(v){refreshPostsTable(v,document.getElementById('catFilter').value);}
+function filterPostsCat(v){refreshPostsTable(document.getElementById('postSearch').value,v);}
+
+/* ── FACT CHECKS TABLE ── */
+function refreshFCTable(){
+  const tb=document.getElementById('fcTableBody');tb.innerHTML='';
+  const fc=(DB.posts||[]).filter(p=>p.category==='fact-check'||p.factCheck?.verdict);
+  const vcol={false:'#e84040',misleading:'var(--gold)','partially-true':'var(--cyan)',verified:'var(--green)'};
+  if(!fc.length){tb.innerHTML='<tr><td colspan="5" style="text-align:center;padding:32px;color:var(--muted)">No fact checks yet</td></tr>';return;}
+  [...fc].reverse().forEach(p=>{
+    const v=p.factCheck?.verdict||'';const claim=p.factCheck?.claim||p.title;
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td style="max-width:280px;font-family:'Playfair Display',serif;font-weight:700;color:var(--text)">"${esc(claim.substring(0,80))}${claim.length>80?'…':''}"</td><td>${v?`<div class="verdict-badge" style="color:${vcol[v]||'var(--muted)'}"><div class="vdot" style="background:${vcol[v]||'var(--muted)'}"></div>${v}</div>`:'<span style="color:var(--muted);font-size:.7rem">—</span>'}</td><td style="font-family:'IBM Plex Mono',monospace;font-size:.7rem;color:var(--muted)">${esc(p.author)}</td><td style="font-family:'IBM Plex Mono',monospace;font-size:.7rem;color:var(--muted)">${p.date}</td><td><div class="action-btns"><button class="btn btn-secondary btn-sm" onclick="editPost('${p.id}')">✏ Edit</button></div></td>`;
+    tb.appendChild(tr);
+  });
 }
 
-// ══════════════════════════════════════════════════
-// EDITOR
-// ══════════════════════════════════════════════════
-function newArticle(){
-  document.getElementById('ed-id').value='';
-  document.getElementById('editor-title').textContent='New Article';
-  document.getElementById('ed-title').value='';
-  document.getElementById('ed-excerpt').value='';
-  document.getElementById('ed-content').value='';
-  document.getElementById('ed-author').value='';
-  document.getElementById('ed-authorTitle').value='';
-  document.getElementById('ed-category').value='geopolitics';
-  document.getElementById('ed-readTime').value='5';
-  document.getElementById('ed-date').value=new Date().toISOString().slice(0,16);
-  document.getElementById('ed-image').value='';
-  document.getElementById('ed-tags').value='';
-  document.getElementById('ed-featured').checked=false;
-  document.getElementById('ed-heroCard').checked=false;
-  document.getElementById('ed-factCheck2').checked=false;
-  document.getElementById('fc-extra2').style.display='none';
-  document.getElementById('ed-verdict2').value='false';
-  document.getElementById('ed-source2').value='';
-  showPanel('editor');
+/* ── POST EDITOR ── */
+function newPost(){
+  editingPostId=null;
+  document.getElementById('postTitle').value='';
+  document.getElementById('editorEdit').innerHTML='';
+  document.getElementById('editorHTML').value='';
+  document.getElementById('postExcerpt').value='';
+  document.getElementById('postCategory').value='geopolitics';
+  document.getElementById('postAuthor').value='';
+  document.getElementById('postTags').value='';
+  document.getElementById('postSlug').value='';
+  document.getElementById('slugPreview').textContent='auto';
+  document.getElementById('postDate').value=new Date().toISOString().split('T')[0];
+  document.getElementById('postStatus').value='publish';
+  document.getElementById('toggleFeatured').classList.remove('on');
+  document.getElementById('toggleCover').classList.remove('on');
+  document.getElementById('coverField').style.display='none';
+  document.getElementById('postCoverImage').value='';
+  document.getElementById('fcVerdict').value='';
+  document.getElementById('fcClaim').value='';
+  document.getElementById('fcSource').value='';
+  document.getElementById('fcCard').style.display='none';
+  document.getElementById('deletePostBtn').style.display='none';
+  nav('new-post');
 }
 
-function editArticle(id){
-  if(!DB)return;
-  const a=DB.articles.find(x=>x.id===id);
-  if(!a)return;
-  document.getElementById('ed-id').value=a.id;
-  document.getElementById('editor-title').textContent='Edit Article';
-  document.getElementById('ed-title').value=a.title||'';
-  document.getElementById('ed-excerpt').value=a.excerpt||'';
-  document.getElementById('ed-content').value=a.content||'';
-  document.getElementById('ed-author').value=a.author||'';
-  document.getElementById('ed-authorTitle').value=a.authorTitle||'';
-  document.getElementById('ed-category').value=a.category||'geopolitics';
-  document.getElementById('ed-readTime').value=a.readTime||5;
-  document.getElementById('ed-date').value=a.date?a.date.slice(0,16):'';
-  document.getElementById('ed-image').value=a.image||'';
-  document.getElementById('ed-tags').value=(a.tags||[]).join(', ');
-  document.getElementById('ed-featured').checked=!!a.featured;
-  document.getElementById('ed-heroCard').checked=!!a.heroCard;
-  document.getElementById('ed-factCheck2').checked=!!a.factCheck;
-  if(a.factCheck){document.getElementById('fc-extra2').style.display='block';}
-  else{document.getElementById('fc-extra2').style.display='none';}
-  document.getElementById('ed-verdict2').value=a.verdict||'false';
-  document.getElementById('ed-source2').value=a.source||'';
-  showPanel('editor');
+function editPost(id){
+  const p=DB.posts.find(x=>x.id===id);if(!p)return;
+  editingPostId=id;
+  document.getElementById('postTitle').value=p.title;
+  document.getElementById('editorEdit').innerHTML=p.content||'';
+  document.getElementById('editorHTML').value=p.content||'';
+  document.getElementById('editorPreview').innerHTML=p.content||'';
+  document.getElementById('postExcerpt').value=p.excerpt||'';
+  document.getElementById('postCategory').value=p.category||'geopolitics';
+  document.getElementById('postAuthor').value=p.author||'';
+  document.getElementById('postTags').value=(p.tags||[]).join(', ');
+  document.getElementById('postSlug').value=p.slug||'';
+  document.getElementById('slugPreview').textContent=p.slug||'auto';
+  document.getElementById('postDate').value=p.date||new Date().toISOString().split('T')[0];
+  document.getElementById('postStatus').value=p.status||'publish';
+  if(p.featured) document.getElementById('toggleFeatured').classList.add('on');
+  else document.getElementById('toggleFeatured').classList.remove('on');
+  if(p.coverImage){document.getElementById('toggleCover').classList.add('on');document.getElementById('coverField').style.display='block';document.getElementById('postCoverImage').value=p.coverImage;}
+  else{document.getElementById('toggleCover').classList.remove('on');document.getElementById('coverField').style.display='none';}
+  if(p.factCheck?.verdict){document.getElementById('fcVerdict').value=p.factCheck.verdict||'';document.getElementById('fcClaim').value=p.factCheck.claim||'';document.getElementById('fcSource').value=p.factCheck.source||'';document.getElementById('fcCard').style.display=p.category==='fact-check'?'block':'none';}
+  document.getElementById('deletePostBtn').style.display='block';
+  updateVerdictColor();
+  nav('new-post');
 }
 
-function toggleFcFields2(){
-  const on=document.getElementById('ed-factCheck2').checked;
-  document.getElementById('fc-extra2').style.display=on?'block':'none';
-}
-function toggleFcFields(){
-  const on=document.getElementById('ed-factCheck').checked;
-  document.getElementById('fc-extra').style.display=on?'block':'none';
-}
-
-function collectArticle(){
-  const id=document.getElementById('ed-id').value||String(Date.now());
-  return {
-    id,
-    slug:document.getElementById('ed-title').value.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''),
-    title:document.getElementById('ed-title').value.trim(),
-    excerpt:document.getElementById('ed-excerpt').value.trim(),
-    content:document.getElementById('ed-content').value.trim(),
-    author:document.getElementById('ed-author').value.trim(),
-    authorTitle:document.getElementById('ed-authorTitle').value.trim(),
-    category:document.getElementById('ed-category').value,
-    readTime:parseInt(document.getElementById('ed-readTime').value)||5,
-    date:new Date(document.getElementById('ed-date').value).toISOString(),
-    image:document.getElementById('ed-image').value.trim(),
-    tags:document.getElementById('ed-tags').value.split(',').map(t=>t.trim()).filter(Boolean),
-    featured:document.getElementById('ed-featured').checked,
-    heroCard:document.getElementById('ed-heroCard').checked,
-    factCheck:document.getElementById('ed-factCheck2').checked,
-    verdict:document.getElementById('ed-verdict2').value,
-    source:document.getElementById('ed-source2').value.trim(),
+async function savePost(){
+  const title=document.getElementById('postTitle').value.trim();
+  if(!title){toast('Please enter a post title','error');return;}
+  const btn=document.getElementById('savePostBtn');btn.disabled=true;btn.textContent='Saving…';
+  const content=editorMode==='html'?document.getElementById('editorHTML').value:document.getElementById('editorEdit').innerHTML;
+  const slug=document.getElementById('postSlug').value.trim()||makeSlug(title);
+  const post={
+    id:editingPostId||(Date.now().toString(36)+Math.random().toString(36).slice(2)),
+    title,slug,
+    excerpt:document.getElementById('postExcerpt').value.trim(),
+    content,
+    category:document.getElementById('postCategory').value,
+    tags:document.getElementById('postTags').value.split(',').map(t=>t.trim()).filter(Boolean),
+    author:document.getElementById('postAuthor').value.trim()||'The Signal Desk',
+    date:document.getElementById('postDate').value,
+    status:document.getElementById('postStatus').value,
+    featured:document.getElementById('toggleFeatured').classList.contains('on'),
+    coverImage:document.getElementById('toggleCover').classList.contains('on')?document.getElementById('postCoverImage').value:'',
+    factCheck:{verdict:document.getElementById('fcVerdict').value,claim:document.getElementById('fcClaim').value,source:document.getElementById('fcSource').value}
   };
+  if(editingPostId){
+    const idx=DB.posts.findIndex(p=>p.id===editingPostId);
+    if(idx>-1) DB.posts[idx]=post;
+  } else {
+    DB.posts.push(post);
+    editingPostId=post.id;
+  }
+  const ok=await saveDB();
+  btn.disabled=false;btn.textContent='💾 Save Post';
+  if(ok){
+    toast(editingPostId?'Post updated!':'Post published!','success');
+    refreshAll();
+    document.getElementById('deletePostBtn').style.display='block';
+  }
 }
 
-async function saveArticle(){
-  const art=collectArticle();
-  if(!art.title){toast('Title is required','error');return;}
-  if(!art.author){toast('Author is required','error');return;}
-  if(!art.content){toast('Content is required','error');return;}
-  if(!DB)DB={site:{title:'THE SIGNAL',tagline:'Truth. Context. Clarity.'},ticker:[],articles:[]};
-  const idx=DB.articles.findIndex(a=>a.id===art.id);
-  if(idx>=0)DB.articles[idx]=art;
-  else DB.articles.unshift(art);
-  await pushToGitHub();
+function cancelEdit(){editingPostId=null;nav('posts');}
+
+let deletingId=null;
+function confirmDeletePost(){deletingId=editingPostId;document.getElementById('deleteModal').classList.add('open');}
+function confirmDeletePostById(id){deletingId=id;document.getElementById('deleteModal').classList.add('open');}
+function closeModal(){document.getElementById('deleteModal').classList.remove('open');}
+async function deletePost(){
+  if(!deletingId)return;
+  DB.posts=DB.posts.filter(p=>p.id!==deletingId);
+  const ok=await saveDB();closeModal();
+  if(ok){toast('Post deleted','info');refreshAll();editingPostId=null;nav('posts');}
 }
 
-function previewArticle(){
-  const art=collectArticle();
-  if(!art.id||art.id===String(Date.now())){toast('Save the article first to preview it','error');return;}
-  window.open(`article.html?id=${art.id}`,'_blank');
+/* ── EDITOR MODES ── */
+function setEditorMode(mode){
+  editorMode=mode;
+  const edit=document.getElementById('editorEdit'),html=document.getElementById('editorHTML'),prev=document.getElementById('editorPreview');
+  edit.style.display=mode==='edit'?'block':'none';
+  html.style.display=mode==='html'?'block':'none';
+  prev.style.display=mode==='preview'?'block':'none';
+  if(mode==='html') html.value=edit.innerHTML;
+  if(mode==='preview') prev.innerHTML=edit.innerHTML;
+  ['editModeBtn','htmlModeBtn','prevModeBtn'].forEach((b,i)=>{document.getElementById(b).style.color=['edit','html','preview'][i]===mode?'var(--white)':'var(--muted)';});
+}
+function syncFromHTML(){document.getElementById('editorEdit').innerHTML=document.getElementById('editorHTML').value;}
+function onEditorInput(){
+  const t=document.getElementById('postTitle').value;
+  const s=makeSlug(t);
+  if(!document.getElementById('postSlug').value){document.getElementById('slugPreview').textContent=s;}
+}
+function fmt(cmd){document.execCommand(cmd,false,null);document.getElementById('editorEdit').focus();}
+function fmtH2(){document.execCommand('formatBlock',false,'h2');}
+function fmtH3(){document.execCommand('formatBlock',false,'h3');}
+function fmtQuote(){document.execCommand('formatBlock',false,'blockquote');}
+function fmtUL(){document.execCommand('insertUnorderedList',false,null);}
+function fmtHR(){document.execCommand('insertHorizontalRule',false,null);}
+function fmtLink(){const url=prompt('URL:');if(url)document.execCommand('createLink',false,url);}
+function toggleCoverField(){document.getElementById('coverField').style.display=document.getElementById('toggleCover').classList.contains('on')?'block':'none';}
+function showFCCard(){document.getElementById('fcCard').style.display=document.getElementById('postCategory').value==='fact-check'?'block':'none';}
+function updateVerdictColor(){const c={'false':'#e84040','misleading':'var(--gold)','partially-true':'var(--cyan)','verified':'var(--green)'};document.getElementById('verdictDotPreview').style.background=c[document.getElementById('fcVerdict').value]||'var(--muted)';}
+document.getElementById('postTitle').addEventListener('input',function(){const s=makeSlug(this.value);document.getElementById('slugPreview').textContent=s;if(!document.getElementById('postSlug').value)document.getElementById('postSlug').value='';});
+document.getElementById('postSlug').addEventListener('input',function(){document.getElementById('slugPreview').textContent=this.value||'auto';});
+
+/* ── SETTINGS ── */
+function refreshSettings(){
+  const s=DB.settings||{};
+  document.getElementById('setSiteName').value=s.siteName||'THE SIGNAL';
+  document.getElementById('setTagline').value=s.tagline||'';
+  document.getElementById('setAbout').value=s.about||'';
+  document.getElementById('setNLHeading').value=s.newsletter?.heading||'';
+  document.getElementById('setNLDesc').value=s.newsletter?.desc||'';
+  document.getElementById('setTwitter').value=s.social?.twitter||'';
+  document.getElementById('setInstagram').value=s.social?.instagram||'';
+  document.getElementById('setWhatsApp').value=s.social?.whatsapp||'';
+  livePreview();
+}
+function livePreview(){
+  document.getElementById('prevSiteName').textContent=document.getElementById('setSiteName').value||'SIGNAL';
+  document.getElementById('prevTagline').textContent=document.getElementById('setTagline').value||'Truth. Context. Clarity.';
+}
+document.getElementById('setSiteName').addEventListener('input',livePreview);
+document.getElementById('setTagline').addEventListener('input',livePreview);
+async function saveSettings(){
+  DB.settings={...DB.settings,
+    siteName:document.getElementById('setSiteName').value,
+    tagline:document.getElementById('setTagline').value,
+    about:document.getElementById('setAbout').value,
+    newsletter:{heading:document.getElementById('setNLHeading').value,desc:document.getElementById('setNLDesc').value},
+    social:{twitter:document.getElementById('setTwitter').value,instagram:document.getElementById('setInstagram').value,whatsapp:document.getElementById('setWhatsApp').value}
+  };
+  const ok=await saveDB();if(ok) toast('Settings saved!','success');
 }
 
-// ══════════════════════════════════════════════════
-// TICKER
-// ══════════════════════════════════════════════════
-function renderTicker(){
-  if(!DB)return;
-  document.getElementById('ticker-textarea').value=(DB.ticker||[]).join('\n');
+/* ── TICKER ── */
+function refreshTicker(){
+  const list=document.getElementById('tickerList');list.innerHTML='';
+  (DB.settings?.ticker||[]).forEach((item,i)=>addTickerItemRow(item,i));
+}
+function addTickerItem(){addTickerItemRow('',document.getElementById('tickerList').children.length);}
+function addTickerItemRow(val,i){
+  const list=document.getElementById('tickerList');
+  const row=document.createElement('div');row.className='ticker-item';
+  row.innerHTML=`<input type="text" value="${esc(val)}" placeholder="Breaking news item…"/><button class="del-btn" onclick="this.parentElement.remove()">✕</button>`;
+  list.appendChild(row);
 }
 async function saveTicker(){
-  if(!DB)return;
-  DB.ticker=document.getElementById('ticker-textarea').value.split('\n').map(l=>l.trim()).filter(Boolean);
-  await pushToGitHub();
+  const items=Array.from(document.querySelectorAll('.ticker-item input')).map(i=>i.value.trim()).filter(Boolean);
+  DB.settings={...DB.settings,ticker:items};
+  const ok=await saveDB();if(ok) toast('Ticker saved!','success');
 }
 
-// ══════════════════════════════════════════════════
-// SETTINGS
-// ══════════════════════════════════════════════════
-function renderSettingsForm(){
-  document.getElementById('s-token').value=getSetting('gh_token');
-  document.getElementById('s-repo').value=getSetting('gh_repo');
-  document.getElementById('s-branch').value=getSetting('gh_branch','main');
-  if(DB){
-    document.getElementById('s-title').value=DB.site.title||'';
-    document.getElementById('s-tagline').value=DB.site.tagline||'';
-  }
-  updateGhStatus();
+/* ── ABOUT ── */
+function refreshAbout(){
+  document.getElementById('aboutMission').value=DB.settings?.about||'';
+  document.getElementById('aboutEditorial').value=DB.settings?.editorial||'';
+  document.getElementById('aboutTeam').value=DB.settings?.team?JSON.stringify(DB.settings.team,null,2):'';
 }
-function saveSettings(){
-  setSetting('gh_token',document.getElementById('s-token').value.trim());
-  setSetting('gh_repo',document.getElementById('s-repo').value.trim());
-  setSetting('gh_branch',document.getElementById('s-branch').value.trim()||'main');
-  updateGhStatus();
-  toast('Settings saved!','success');
-}
-function updateGhStatus(){
-  const tok=getSetting('gh_token'),repo=getSetting('gh_repo');
-  const ok=tok&&repo;
-  document.getElementById('gh-dot').className='status-dot '+(ok?'ok':'err');
-  document.getElementById('gh-status-text').textContent=ok?`Connected to ${repo}`:'Not configured — add token and repo below';
-}
-async function testGitHub(){
-  const token=document.getElementById('s-token').value.trim();
-  const repo=document.getElementById('s-repo').value.trim();
-  if(!token||!repo){toast('Fill in token and repo first','error');return;}
+async function saveAbout(){
   try{
-    const r=await fetch(`https://api.github.com/repos/${repo}`,{headers:{'Authorization':'Bearer '+token,'Accept':'application/vnd.github+json'}});
-    if(r.ok){toast('✅ Connection successful!','success');}
-    else{const d=await r.json();toast('GitHub error: '+d.message,'error');}
-  }catch(e){toast('Connection failed: '+e.message,'error');}
-}
-async function saveSiteInfo(){
-  if(!DB)return;
-  DB.site.title=document.getElementById('s-title').value.trim();
-  DB.site.tagline=document.getElementById('s-tagline').value.trim();
-  await pushToGitHub();
-}
-function changePassword(){
-  const p1=document.getElementById('s-newpw').value;
-  const p2=document.getElementById('s-newpw2').value;
-  if(p1.length<6){toast('Password must be at least 6 characters','error');return;}
-  if(p1!==p2){toast('Passwords do not match','error');return;}
-  setSetting('adminpw',p1);
-  toast('Password changed!','success');
-  document.getElementById('s-newpw').value='';
-  document.getElementById('s-newpw2').value='';
+    const team=document.getElementById('aboutTeam').value.trim();
+    DB.settings={...DB.settings,
+      about:document.getElementById('aboutMission').value,
+      editorial:document.getElementById('aboutEditorial').value,
+      team:team?JSON.parse(team):[]
+    };
+    const ok=await saveDB();if(ok) toast('About page saved!','success');
+  }catch(e){toast('Invalid team JSON: '+e.message,'error');}
 }
 
-// ══════════════════════════════════════════════════
-// GITHUB PUSH
-// ══════════════════════════════════════════════════
-async function pushToGitHub(){
-  const token=getSetting('gh_token');
-  const repo=getSetting('gh_repo');
-  const branch=getSetting('gh_branch','main');
-  const json=JSON.stringify(DB,null,2);
-
-  // Always save locally for preview
-  renderDashboard();
-  renderArticleTable();
-
-  if(!token||!repo){
-    toast('⚠️ GitHub not configured — changes saved locally only. Go to Settings to connect GitHub.','error');
-    showPanel('articles');
-    return;
-  }
-
-  document.getElementById('saving-overlay').classList.add('open');
-  try{
-    // Get current SHA
-    const fileRes=await fetch(`https://api.github.com/repos/${repo}/contents/data.json?ref=${branch}`,{
-      headers:{'Authorization':'Bearer '+token,'Accept':'application/vnd.github+json'}
+/* ── SUBSCRIBERS ── */
+function refreshSubscribers(){
+  const subs=DB.subscribers||[];
+  document.getElementById('subCount').textContent=subs.length;
+  document.getElementById('subsBadge').textContent=subs.length;
+  if(subs.length){
+    document.getElementById('subsTable').style.display='block';
+    document.getElementById('subsEmpty').style.display='none';
+    const tb=document.getElementById('subsTableBody');tb.innerHTML='';
+    subs.forEach((s,i)=>{
+      const tr=document.createElement('tr');
+      const email=typeof s==='string'?s:s.email;
+      const date=typeof s==='object'&&s.date?s.date:'—';
+      tr.innerHTML=`<td style="font-family:'IBM Plex Mono',monospace;font-size:.7rem;color:var(--muted)">${i+1}</td><td style="font-family:'IBM Plex Mono',monospace;font-size:.78rem">${esc(email)}</td><td style="font-family:'IBM Plex Mono',monospace;font-size:.7rem;color:var(--muted)">${date}</td>`;
+      tb.appendChild(tr);
     });
-    let sha='';
-    if(fileRes.ok){const fd=await fileRes.json();sha=fd.sha;}
-
-    // Commit
-    const body={message:'[Admin] Update data.json',content:btoa(unescape(encodeURIComponent(json))),branch};
-    if(sha)body.sha=sha;
-
-    const putRes=await fetch(`https://api.github.com/repos/${repo}/contents/data.json`,{
-      method:'PUT',
-      headers:{'Authorization':'Bearer '+token,'Accept':'application/vnd.github+json','Content-Type':'application/json'},
-      body:JSON.stringify(body)
-    });
-    if(putRes.ok){
-      toast('✅ Published to GitHub! Site will update in ~30 seconds.','success');
-      document.getElementById('save-status').textContent='Saved '+new Date().toLocaleTimeString();
-    } else {
-      const d=await putRes.json();
-      toast('GitHub error: '+(d.message||'Unknown error'),'error');
-    }
-  }catch(e){
-    toast('Publish failed: '+e.message,'error');
-  }finally{
-    document.getElementById('saving-overlay').classList.remove('open');
+  } else {
+    document.getElementById('subsTable').style.display='none';
+    document.getElementById('subsEmpty').style.display='block';
   }
-  showPanel('articles');
+}
+function exportSubs(){
+  const subs=DB.subscribers||[];
+  if(!subs.length){toast('No subscribers yet','info');return;}
+  const csv='Email,Date\n'+subs.map(s=>{const e=typeof s==='string'?s:s.email;const d=typeof s==='object'?s.date||'':'' ;return `"${e}","${d}"`;}).join('\n');
+  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download='the-signal-subscribers.csv';a.click();
 }
 
-// ══════════════════════════════════════════════════
-// DELETE
-// ══════════════════════════════════════════════════
-let deleteTargetId=null;
-function confirmDelete(id){
-  deleteTargetId=id;
-  const a=DB.articles.find(x=>x.id===id);
-  document.getElementById('modal-body').textContent=`Delete "${a?a.title:'this article'}"? This cannot be undone.`;
-  document.getElementById('confirm-modal').classList.add('open');
+/* ── HELPERS ── */
+function makeSlug(t){return t.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').substring(0,60);}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function toast(msg,type='info'){
+  const c=document.getElementById('toastContainer');
+  const el=document.createElement('div');el.className='toast-item '+type;
+  el.innerHTML=(type==='success'?'✓ ':type==='error'?'✕ ':type==='info'?'ℹ ':'')+msg;
+  c.appendChild(el);setTimeout(()=>el.remove(),3500);
 }
-document.getElementById('modal-confirm').onclick=async function(){
-  if(!deleteTargetId)return;
-  DB.articles=DB.articles.filter(a=>a.id!==deleteTargetId);
-  closeModal();
-  await pushToGitHub();
-  deleteTargetId=null;
-};
-function closeModal(){document.getElementById('confirm-modal').classList.remove('open');}
 
-// ══════════════════════════════════════════════════
-// TOAST
-// ══════════════════════════════════════════════════
-let toastTimer=null;
-function toast(msg,type=''){
-  const el=document.getElementById('toast');
-  el.textContent=msg;
-  el.className='toast '+(type||'');
-  el.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer=setTimeout(()=>el.classList.remove('show'),4000);
+/* ── AUTO-RESTORE SESSION ── */
+(function(){
+  const saved=localStorage.getItem('sg-gh');
+  if(saved){
+    try{
+      const g=JSON.parse(saved);
+      document.getElementById('ghOwner').value=g.owner;
+      document.getElementById('ghRepo').value=g.repo;
+      document.getElementById('ghToken').value=g.token;
+      document.getElementById('ghBranch').value=g.branch;
+    }catch(e){}
+  }
+})();
+
+function logout(){
+  localStorage.removeItem('sg-gh');
+  document.getElementById('loginScreen').style.display='flex';
+  document.getElementById('app').style.display='none';
+  GH={owner:'',repo:'',token:'',branch:'main'};
+  DB={settings:{},subscribers:[],posts:[]};
+  fileSHA='';
+  document.getElementById('ghToken').value='';
 }
+
+/* ── KEYBOARD SHORTCUTS ── */
+document.addEventListener('keydown',function(e){
+  if((e.ctrlKey||e.metaKey)&&e.key==='s'){
+    e.preventDefault();
+    const active=document.querySelector('.panel.active');
+    if(active?.id==='panel-new-post') savePost();
+    else if(active?.id==='panel-settings') saveSettings();
+    else if(active?.id==='panel-ticker') saveTicker();
+  }
+  if((e.ctrlKey||e.metaKey)&&e.key==='n'){
+    e.preventDefault();newPost();
+  }
+});
 </script>
 </body>
 </html>
